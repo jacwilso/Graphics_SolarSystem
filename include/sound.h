@@ -12,27 +12,30 @@
 #endif
 
 #include <stdio.h>
+#include <string>
+using namespace std;
+
+#include "Point.h"
 
 class Sound{
   private:
-    #define NUM_BUFFERS 2 // number of buffers
-    #define NUM_SOURCES 2 // number of sources
+    int wavSrcs;
 
-    // lab04
     ALCdevice *device; 
     ALCcontext *context;
-    ALuint buffers[ NUM_BUFFERS ];
+    ALuint *buffers;
     
-    void PrintOpenALInfo(); // print the information
+    void PrintOpenALInfo();
   public:
-
-    ALuint sources[ NUM_SOURCES ]; // wavs in source array
+    ALuint *sources;
     
-    void initializeOpenAL( int argc, char *argv[] ); // initializer of the sound -- called in main
-    void cleanupOpenAL(); // clean the sound up
+    Sound( int wavSrcs );
+    void initializeOpenAL( int srcs, string sourceFile[], Point position[] );
+    //void initializeOpenAL( int argc, char *argv[] ); 
+    void cleanupOpenAL();
     
-    void positionListener(float posX,float posY,float posZ,float dirX,float dirY,float dirZ,float upX=0,float upY=1,float upZ=0); // position the listener with proper variables
-    void positionSource( ALuint src, float posX, float posY, float posZ ); // postion the source with proper variables
+    void positionListener( Point position, Point direction, Point upVec);
+    void positionSource( ALuint src, Point position ); 
 };
 
 #endif

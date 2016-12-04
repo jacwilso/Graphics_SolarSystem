@@ -32,6 +32,7 @@ using namespace std;
 
 // Headers We've Written
 #include "helper.h"
+#include "Shader_Utils.h"
 
 #include "camera.h"
 #include "cubemap.h"
@@ -50,15 +51,14 @@ int keyState[256];
 /******** MENU ********/
 GLint menuId;			// handle for our menu
 
-
 /******** Camera View ********/
 int camera=1;
 float lookAtX=0, lookAtY=0, lookAtZ=0, objTheta=0;
 Camera cam;
 
 /******** SOUND ********/
-Sound wav;
-int wavSrcs=0;
+int wavSrcs = 0;
+Sound wav( wavSrcs ); // # srcs
 bool soundOff=true;
 
 /******** SKYBOX ********/
@@ -76,6 +76,9 @@ int Nhits, dx, dy, nitems, zmin, zmax, item, d;
 GLint GrWindow;
 bool Debug=false;
 vector<bool> pick;
+
+/******** SHADER ********/
+GLuint shaderProgramHandle = 0;
 
 // resizeWindow() //////////////////////////////////////////////////////////////
 void resizeWindow(int w, int h) {
@@ -348,6 +351,14 @@ void registerCallbacks() {
   glutTimerFunc( 1000.0f / 60.0f, myTimer, 0 );
 }
 
+// setupShaders() //////////////////////////////////////////////////////////////////////
+void setupShaders(char* vertex, char* fragment) {
+  shaderProgramHandle = createShaderProgram(vertex, fragment);
+  // can change to string and use .c_str()
+  //"shaders/customShader.v.glsl"
+  //"shaders/customShader.f.glsl"
+}
+
 // cleanup() //////////////////////////////////////////////////////////////////////
 void cleanup(){
   wav.cleanupOpenAL();
@@ -355,9 +366,9 @@ void cleanup(){
 
 // main() //////////////////////////////////////////////////////////////////////
 int main( int argc, char **argv ) {
-  //wav.initializeOpenAL(argc,argv);
   
   glutInit( &argc, argv );
+  alutInit(&argc,argv);
   glutInitDisplayMode( GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB );
   glutInitWindowPosition( 50, 50 );
   glutInitWindowSize( windowWidth, windowHeight );
@@ -402,6 +413,11 @@ int main( int argc, char **argv ) {
   initScene();
   printf( "[INFO]: OpenGL Scene set up\n" );
   
+  //setupShaders(); // need to pass some variables
+  printf( "[INFO]: Shader compilation complete.\n" );
+
+  //wav.initializeOpenAL(argc,argv);
+
   createMenus();
 
   registerCallbacks();
