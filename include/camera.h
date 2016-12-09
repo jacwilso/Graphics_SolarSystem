@@ -13,6 +13,9 @@
 
 #include <math.h>
 
+#include <iostream>
+using namespace std;
+
 class Camera{
   private:
     const static float move=0.6; // distance the camera moves forward
@@ -68,8 +71,7 @@ class Camera{
     }
     // set the camera radius based on mouse position
     void setCamR(float x,float y)
-    {cameraR=2*(x-mouseX)+2*(y-mouseY);
-     if(cameraR<=10) cameraR=10;
+    {cameraR += (x-mouseX)+(y-mouseY);
     }
 
     void arcBall(); // arc ball camera

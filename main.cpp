@@ -37,6 +37,7 @@ using namespace std;
 #include "camera.h"
 #include "cubemap.h"
 #include "sound.h"
+#include "planet.h"
 
 // GLOBAL VARIABLES ////////////////////////////////////////////////////////////
 
@@ -53,7 +54,6 @@ GLint menuId;			// handle for our menu
 
 /******** Camera View ********/
 int camera=1;
-float lookAtX=0, lookAtY=0, lookAtZ=0, objTheta=0;
 Camera cam;
 
 /******** SOUND ********/
@@ -79,6 +79,9 @@ vector<bool> pick;
 
 /******** SHADER ********/
 GLuint shaderProgramHandle = 0;
+
+/******** PLANET ********/
+vector<Planet*> solar_sys;
 
 // resizeWindow() //////////////////////////////////////////////////////////////
 void resizeWindow(int w, int h) {
@@ -124,7 +127,7 @@ void initScene()  {
   glShadeModel(GL_SMOOTH);
 
   // Camera Initialization
-  cam.setCamera(10,10,10,-M_PI / 3.0f,M_PI / 2.8f,15,lookAtX,lookAtY+3.7,lookAtZ);
+  cam.setCamera(500,500,500,-M_PI / 3.0f,M_PI / 2.8f,700,0,0,0);
   cam.recomputeOrientation();
   
   // Skybox Intialization
@@ -133,6 +136,17 @@ void initScene()  {
   sky.Load(skyFace);
   
   // Solar System Initialization
+  for(int planInt=SUN; planInt!=COMET; planInt++){
+    cout<<planInt<<endl;
+    pick.push_back(false);
+    glPushName(planInt);
+      solar_sys.push_back(new Planet(PLANET(planInt)));
+    glPopName();
+  }
+  for(int i=0; i<pick.size(); i++)
+    cout<<pick[i]<<endl;
+  for(unsigned int i=0; i<solar_sys.size(); i++)
+    solar_sys[i]->startTime();
   //pick.push_back(false); << for each planet
   //glPushName(planet) //<< may also need in rendering
   //glPopName()
@@ -168,7 +182,7 @@ void renderScene(void)  {
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
-  cam.setLookAt(lookAtX,lookAtY+3.7,lookAtZ); // set the camera's look at
+  //cam.setLookAt(lookAtX,lookAtY+3.7,lookAtZ); // set the camera's look at
   switch(camera){
     case 1:
       cam.arcBall();
@@ -183,14 +197,24 @@ void renderScene(void)  {
 
   glPushMatrix();
 
-    drawGrid();
-  
+    //drawGrid();
+    
+    /*
     glPushMatrix();
       glScalef(1000,1000,1000);
       sky.cubeTexture();
     glPopMatrix();
+    */
 
     // Solar System render here
+    for(unsigned int i=0; i<solar_sys.size(); i++){
+      glPushMatrix();
+        glTranslatef(solar_sys[i]->position.getX(), solar_sys[i]->position.getY(), solar_sys[i]->position.getZ()); 
+        solar_sys[i]->draw();
+      glPopMatrix();
+      //if( pick[i] )
+        //cout<<i<<endl;
+    }
     //if pick[i] do something
     
 
@@ -302,6 +326,8 @@ void normalKeys(){}
 // myTimer() ////////////////////////////////////////////////////////////////////
 void myTimer( int value ) {
   normalKeys();
+  for(unsigned int i=0; i<solar_sys.size(); i++)
+    solar_sys[i]->update();
   
   ALenum sourceState;
   for(int i=0; i<wavSrcs; i++){
@@ -362,6 +388,8 @@ void setupShaders(char* vertex, char* fragment) {
 // cleanup() //////////////////////////////////////////////////////////////////////
 void cleanup(){
   wav.cleanupOpenAL();
+  for(unsigned int i=0; i<solar_sys.size(); i++)
+    delete solar_sys[i];
 }
 
 // main() //////////////////////////////////////////////////////////////////////

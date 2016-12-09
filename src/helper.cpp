@@ -60,10 +60,10 @@ void drawGrid()
     glColor3f(.6,.6,.6);
     for(int dir = 0; dir < 2; dir++)
     {
-        for(int i = -100; i < 101; i++)
+        for(int i = -1000; i <1001 ; i++)
         {
             glBegin(GL_LINE_STRIP);
-            for(int j = -100; j < 101; j++)
+            for(int j = -1000; j < 1001; j++)
                 glVertex3f(dir<1?i:j, 0, dir<1?j:i);
             glEnd();
         }
