@@ -395,16 +395,52 @@ void loadTextures() {
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.setTexture(texture, EARTH);
+
+  texture = SOIL_load_OGL_texture("textures/jupiter.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, JUPITER);
+
+  texture = SOIL_load_OGL_texture("textures/mars.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, MARS);
+
+  texture = SOIL_load_OGL_texture("textures/mercury.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, MERCURY);
+
+  texture = SOIL_load_OGL_texture("textures/saturn.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, SATURN);
+
+  texture = SOIL_load_OGL_texture("textures/venus.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, VENUS);
+
+  texture = SOIL_load_OGL_texture("textures/uranus.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, URANUS);
+
+  texture = SOIL_load_OGL_texture("textures/neptune.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, NEPTUNE);
 }
 
 // setupShaders() //////////////////////////////////////////////////////////////////////
+// sets up the shaders and then attaches them to the correct planet. 
 void setupShaders() {
   sunShader = createShaderProgram("shaders/texture.v.glsl","shaders/texture.f.glsl");
   uniformTimeLoc = glGetUniformLocation(sunShader, "time");
   solar.setShader(sunShader, uniformTimeLoc, SUN);
-  // can change to string and use .c_str()
-  //"shaders/customShader.v.glsl"
-  //"shaders/customShader.f.glsl"
+  solar.setShader(sunShader, 0, EARTH);
+
+
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////
