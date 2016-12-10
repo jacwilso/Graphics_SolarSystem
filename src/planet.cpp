@@ -131,12 +131,13 @@ void Planet::draw(){
 
     glPushMatrix();
       glRotatef(rotation, 0.0, 1, 0.0);
-      glutSolidSphere(radius/EARTH_RADIUS, 32, 32);
+      // glutSolidSphere(radius/EARTH_RADIUS, 32, 32);
+      drawSphere();
       
-      glPushMatrix();
-        glTranslatef(radius, 0, 0);
-        glutSolidSphere(radius/(EARTH_RADIUS*10.0), 32, 32);
-      glPopMatrix();
+      // glPushMatrix();
+      //   glTranslatef(radius, 0, 0);
+      //   glutSolidSphere(radius/(EARTH_RADIUS*10.0), 32, 32);
+      // glPopMatrix();
     
     glPopMatrix();
   glPopMatrix();
@@ -150,6 +151,57 @@ void Planet::draw(){
       satellites[i].draw();
     glPopMatrix();
   }
+}
+
+void Planet::drawSphere() {
+  float stacks = 32, slices = 32;
+  float thetaStep = 6.28f / stacks;
+  float phiStep = 6.28f / slices;
+  float partialRadius = radius/EARTH_RADIUS;
+
+  glPushMatrix(); {
+      glTranslatef( 0, partialRadius, 0 );
+      
+      for( float theta = 0; theta < 6.28; theta += thetaStep ) {
+          for( float phi = -3.14; phi < 3.14; phi += phiStep ) {
+              Point p1( partialRadius * cos(theta) * sin(phi),
+                        partialRadius * cos(phi),
+                        partialRadius * sin(theta) * sin(phi) );
+              Point p2( partialRadius * cos(theta+thetaStep) * sin(phi),
+                        partialRadius * cos(phi),
+                        partialRadius * sin(theta+thetaStep) * sin(phi) );
+              Point p3( partialRadius * cos(theta) * sin(phi+phiStep),
+                        partialRadius * cos(phi+phiStep),
+                        partialRadius * sin(theta) * sin(phi+phiStep) );
+              Point p4( partialRadius * cos(theta+thetaStep) * sin(phi+phiStep),
+                        partialRadius * cos(phi+phiStep),
+                        partialRadius * sin(theta+thetaStep) * sin(phi+phiStep) );
+          
+              Vector n1 = p1 - Point(0,0,0);
+              Vector n2 = p2 - Point(0,0,0);
+              Vector n3 = p3 - Point(0,0,0);
+              Vector n4 = p4 - Point(0,0,0);
+          
+              glBegin( GL_QUADS ); {
+                  glTexCoord2f( theta / 6.28, (phi+3.14f) / 6.28 );
+                  n1.glNormal();
+                  p1.glVertex();
+              
+                  glTexCoord2f( (theta+thetaStep) / 6.28, (phi+3.14f) / 6.28 );
+                  n2.glNormal();
+                  p2.glVertex();
+              
+                  glTexCoord2f( (theta+thetaStep) / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
+                  n4.glNormal();
+                  p4.glVertex();
+              
+                  glTexCoord2f( theta / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
+                  n3.glNormal();
+                  p3.glVertex();
+              } glEnd();
+          }
+      }
+  }; glPopMatrix();
 }
 
 void Planet::update(){

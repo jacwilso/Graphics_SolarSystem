@@ -25,6 +25,7 @@ const float SUN_RADIUS = 109; // Earth radii
 class Planet{
 private:
   float rotation;
+  void drawSphere();
 public:
   PLANET type;
   Point position;
