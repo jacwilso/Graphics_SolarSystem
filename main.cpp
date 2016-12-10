@@ -82,8 +82,6 @@ GLint GrWindow;
 bool Debug=true;
 
 /******** SHADER ********/
-GLuint sunShader;
-GLuint uniformTimeLoc = 0;
 
 /******** PLANET ********/
 Solar_System solar;
@@ -435,11 +433,19 @@ void loadTextures() {
 // setupShaders() //////////////////////////////////////////////////////////////////////
 // sets up the shaders and then attaches them to the correct planet. 
 void setupShaders() {
-  sunShader = createShaderProgram("shaders/texture.v.glsl","shaders/texture.f.glsl");
-  uniformTimeLoc = glGetUniformLocation(sunShader, "time");
+  GLuint sunShader = createShaderProgram("shaders/texture.v.glsl","shaders/texture.f.glsl");
+  GLuint uniformTimeLoc = glGetUniformLocation(sunShader, "time");
   solar.setShader(sunShader, uniformTimeLoc, SUN);
-  solar.setShader(sunShader, 0, EARTH);
 
+  GLuint planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
+  solar.setShader(planetShader, 0, EARTH);
+  solar.setShader(planetShader, 0, JUPITER);
+  solar.setShader(planetShader, 0, MARS);
+  solar.setShader(planetShader, 0, MERCURY);
+  solar.setShader(planetShader, 0, SATURN);
+  solar.setShader(planetShader, 0, VENUS);
+  solar.setShader(planetShader, 0, URANUS);
+  solar.setShader(planetShader, 0, NEPTUNE);
 
 }
 
