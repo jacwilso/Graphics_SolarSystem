@@ -8,9 +8,10 @@
     #include <OpenAL/alc.h>
     #include <GLUT/glut.h>
 #else
-    #include <AL/alut.h>
+/////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
+    /*#include <AL/alut.h>
     #include <AL/al.h>
-    #include <AL/alc.h>
+    #include <AL/alc.h>*/
     #include <GL/glut.h>
 #endif
 
@@ -60,7 +61,8 @@ Point newPos, newLook;
 
 /******** SOUND ********/
 int wavSrcs = 0;
-Sound wav( wavSrcs ); // # srcs
+/////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
+// Sound wav( wavSrcs ); // # srcs
 bool soundOff=true;
 
 /******** SKYBOX ********/
@@ -145,6 +147,7 @@ void initScene()  {
   solar.startTime();
 
   //Sound
+  /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
   //wav.positionListener(person pos, cam direction,0,1,0);
   /*for(int i=0; i<wavSrcs; i++) // move to render if dynamic
     wav.positionSource(wav.sources[i], sound pos);*/
@@ -309,11 +312,12 @@ void myTimer( int value ) {
   solar.update();
   cam.update();
 
-  ALenum sourceState;
+  /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
+  /*ALenum sourceState;
   for(int i=0; i<wavSrcs; i++){
     alGetSourcei( wav.sources[i], AL_SOURCE_STATE, &sourceState );
     if(soundOff) alSourcePause( wav.sources[i] );
-  }
+  }*/
 
   glutPostRedisplay();
   glutTimerFunc( 1000.0f / 60.0f, myTimer, 0 );
@@ -367,7 +371,8 @@ void setupShaders(char* vertex, char* fragment) {
 
 // cleanup() //////////////////////////////////////////////////////////////////////
 void cleanup(){
-  wav.cleanupOpenAL();
+  /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
+  // wav.cleanupOpenAL();
   solar.cleanup();
 }
 
@@ -375,7 +380,8 @@ void cleanup(){
 int main( int argc, char **argv ) {
   
   glutInit( &argc, argv );
-  alutInit(&argc,argv);
+  /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
+  // alutInit(&argc,argv);
   glutInitDisplayMode( GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB );
   glutInitWindowPosition( 50, 50 );
   glutInitWindowSize( windowWidth, windowHeight );
@@ -420,9 +426,10 @@ int main( int argc, char **argv ) {
   initScene();
   printf( "[INFO]: OpenGL Scene set up\n" );
   
-  //setupShaders(); // need to pass some variables
+  setupShaders("shaders/particleShader.v.glsl","shaders/particleShader.f.glsl"); // need to pass some variables
   printf( "[INFO]: Shader compilation complete.\n" );
 
+  /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
   //wav.initializeOpenAL(argc,argv);
 
   createMenus();
