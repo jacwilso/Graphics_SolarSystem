@@ -34,7 +34,7 @@ public:
   Vector orbitalVel;
   float radius, mass, toSun, axisTilt, rotationVel, lastTime; 
   vector<Planet> satellites;
-  GLuint shaderHandle;
+  GLuint shaderHandle, textureHandle, shaderTimeLoc;
   //static GLUquadric* obj;
   
   Planet(PLANET planet);
@@ -42,7 +42,8 @@ public:
   void startTime();
   void draw();
   void update();
-  void registerShader(GLuint handle) {shaderHandle = handle;}
+  void registerShader(GLuint handle, GLuint timeHandle) {shaderHandle = handle; shaderTimeLoc = timeHandle;}
+  void registerTexture(GLuint handle) {textureHandle = handle;}
 };
 
 #endif

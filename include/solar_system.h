@@ -35,7 +35,8 @@ public:
   void update();
   void draw();
   void cleanup();
-  void setShader(GLuint,PLANET);
+  void setShader(GLuint, GLuint, PLANET);
+  void setTexture(GLuint, PLANET);
 };
 
 #endif

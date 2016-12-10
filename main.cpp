@@ -66,10 +66,11 @@ int wavSrcs = 0;
 bool soundOff=true;
 
 /******** SKYBOX ********/
-string skyFolder = "skybox1/craterlake";
+string skyFolder = "skybox1/purplenebula";
 string skyExt = ".tga";
 string skyFace[6] = {"_ft","_rt","_dn","_up","_bk","_lf"};
 CubemapTexture sky;
+GLuint sunTexture;
 
 /******** PICKING ********/
 #define PICK_TOL 10.
@@ -81,7 +82,8 @@ GLint GrWindow;
 bool Debug=true;
 
 /******** SHADER ********/
-GLuint shaderProgramHandle = 0;
+GLuint sunShader;
+GLuint uniformTimeLoc = 0;
 
 /******** PLANET ********/
 Solar_System solar;
@@ -192,24 +194,16 @@ void renderScene(void)  {
     glPopMatrix();
     
 
-    // Solar System render here
-  glUseProgram(shaderProgramHandle);
-  GLfloat diffCol[4] = { 0.2, 0.3, 0.6 };
-    GLfloat specCol[4] = { 1.0, 1.0, 0.0 };
-    GLfloat ambCol[4] = { 0.8, 0.8, 0.8 };
-
-    // and now set them for the front and back faces
-    glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, diffCol );
-    glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, specCol );
-    glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, 96.0 );
-    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, ambCol );
+  // Solar System render here
+  //Pass the time to the shaders
   glPushName(1);
   glPushMatrix();
     glTranslatef( solar.position.getX(), solar.position.getY(), solar.position.getZ() );
     solar.draw();
   glPopMatrix();
   glPopName();
-  glUseProgram(0);
+  
+  glDisable( GL_TEXTURE_2D );
   //if solar.pick[i] do something
 
   if(RenderMode == GL_RENDER)
@@ -372,9 +366,37 @@ void registerCallbacks() {
   glutTimerFunc( 1000.0f / 60.0f, myTimer, 0 );
 }
 
+////////////////////////////////////////////////////////////////////////////
+//This will set all the values for the current texture. 
+//Decided to clamp to edge, even though it shouldn't matter since all textures should be up to the edge anyway.
+/////////////////////////////////////////////////////////////////////////////
+void registerTexture() {
+    glEnable(GL_TEXTURE_2D);
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+// loadTextures() //////////////////////////////////////////////////////////////////////
+// This will load in the textures and give them to the places we want them to be. 
+void loadTextures() {
+  GLuint texture;
+  texture = SOIL_load_OGL_texture("textures/sun.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, SUN);
+}
+
 // setupShaders() //////////////////////////////////////////////////////////////////////
 void setupShaders() {
-  solar.setShader(createShaderProgram("shaders/customShader.v.glsl","shaders/customShader.f.glsl"), SUN);
+  sunShader = createShaderProgram("shaders/texture.v.glsl","shaders/texture.f.glsl");
+  uniformTimeLoc = glGetUniformLocation(sunShader, "time");
+  solar.setShader(sunShader, uniformTimeLoc, SUN);
   // can change to string and use .c_str()
   //"shaders/customShader.v.glsl"
   //"shaders/customShader.f.glsl"
@@ -438,7 +460,10 @@ int main( int argc, char **argv ) {
   printf( "[INFO]: OpenGL Scene set up\n" );
   
   setupShaders(); // need to pass some variables
-  printf( "[INFO]: Shader compilation complete.\n" );
+  printf( "[INFO]: Shader compilation complete.\n\n" );
+
+  loadTextures();
+  printf( "[INFO]: Texture creation complete.\n" );
 
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
   //wav.initializeOpenAL(argc,argv);

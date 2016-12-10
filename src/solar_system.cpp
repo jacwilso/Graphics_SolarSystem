@@ -15,10 +15,18 @@ Solar_System::Solar_System(){
   calculate();
 }
 
-void Solar_System::setShader(GLuint handle, PLANET planet) {
+void Solar_System::setShader(GLuint handle, GLuint timeHandle, PLANET planet) {
   for(int planInt = SUN; planInt != COMET; planInt++) {
     if(solar_sys[planInt]->type == planet) {
-      solar_sys[planInt]->registerShader(handle);
+      solar_sys[planInt]->registerShader(handle, timeHandle);
+    }
+  }
+}
+
+void Solar_System::setTexture(GLuint handle, PLANET planet) {
+  for(int planInt = SUN; planInt != COMET; planInt++) {
+    if(solar_sys[planInt]->type == planet) {
+      solar_sys[planInt]->registerTexture(handle);
     }
   }
 }

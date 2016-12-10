@@ -108,6 +108,7 @@ Planet::Planet(PLANET planet){
   mass *= EARTH_MASS;
   position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
   shaderHandle = 0;
+  textureHandle = 0;
   //cout<<"[radius] "<<radius<<endl;
   //cout<<"[toSun] "<<toSun<<endl;
 }
@@ -119,12 +120,12 @@ void Planet::startTime(){
 }
 
 void Planet::draw(){
-  glUseProgram(shaderHandle);
   glPushMatrix();
     //glTranslatef(position.getX(), position.getY(), position.getZ());
     glRotatef(axisTilt, 1.0, 0.0, 0.0);
     
     glDisable(GL_LIGHTING);
+    glUseProgram(0);
       glBegin(GL_LINES);
         glVertex3f(0, -3*radius/(EARTH_RADIUS*2.0), 0);
         glVertex3f(0, 3*radius/(EARTH_RADIUS*2.0), 0);
@@ -133,14 +134,20 @@ void Planet::draw(){
 
     glPushMatrix();
       glRotatef(rotation, 0.0, 1, 0.0);
-      // glutSolidSphere(radius/EARTH_RADIUS, 32, 32);
-      drawSphere();
       
-      // glPushMatrix();
-      //   glTranslatef(radius, 0, 0);
-      //   glutSolidSphere(radius/(EARTH_RADIUS*10.0), 32, 32);
-      // glPopMatrix();
-    
+      // enable textures.
+      glEnable( GL_TEXTURE_2D );
+      glColor4f(1,1,1,1);
+      glBindTexture(GL_TEXTURE_2D, textureHandle);
+      // enable shader
+      glUseProgram(shaderHandle);
+
+      glUniform1f(shaderTimeLoc, glutGet(GLUT_ELAPSED_TIME)/1000.0f);
+      // drawSphere();
+      GLUquadricObj *myQuad = gluNewQuadric();
+      if(textureHandle != 0)
+        gluQuadricTexture(myQuad, true);
+      gluSphere(myQuad, radius/EARTH_RADIUS, 32, 32);
     glPopMatrix();
   glPopMatrix();
 
@@ -153,7 +160,10 @@ void Planet::draw(){
       satellites[i].draw();
     glPopMatrix();
   }
+
   glUseProgram(0);
+
+  glDisable( GL_TEXTURE_2D );
 }
 
 void Planet::drawSphere() {
@@ -186,19 +196,19 @@ void Planet::drawSphere() {
               Vector n4 = p4 - Point(0,0,0);
           
               glBegin( GL_QUADS ); {
-                  //glTexCoord2f( theta / 6.28, (phi+3.14f) / 6.28 );
+                  glTexCoord2f( theta / 6.28, (phi+3.14f) / 6.28 );
                   n1.glNormal();
                   p1.glVertex();
               
-                  //glTexCoord2f( (theta+thetaStep) / 6.28, (phi+3.14f) / 6.28 );
+                  glTexCoord2f( (theta+thetaStep) / 6.28, (phi+3.14f) / 6.28 );
                   n2.glNormal();
                   p2.glVertex();
               
-                  //glTexCoord2f( (theta+thetaStep) / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
+                  glTexCoord2f( (theta+thetaStep) / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
                   n4.glNormal();
                   p4.glVertex();
               
-                  //glTexCoord2f( theta / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
+                  glTexCoord2f( theta / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
                   n3.glNormal();
                   p3.glVertex();
               } glEnd();
