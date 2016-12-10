@@ -12,8 +12,6 @@ varying vec3 lightVec;
 varying vec3 halfwayVec;
 varying float attenuation;
 
-uniform float age;
-uniform float maxAge;
 uniform sampler2D tex;
 
 void main(void) 
@@ -71,8 +69,4 @@ void main(void)
 
     float at = texel.a;
     float af = theColor.a;
-
-    // compute the modulated resulting color
-    // Have the color go to black as it ages
-    gl_FragColor = vec4( ct * cf, at * af ) * (1-sin(age/maxAge));
 }

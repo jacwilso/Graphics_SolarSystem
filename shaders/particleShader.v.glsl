@@ -11,8 +11,6 @@ varying vec3 normalVec;
 varying vec3 lightVec;
 varying vec3 halfwayVec;
 varying float attenuation;
-uniform float age;
-uniform float maxAge;
 
 void main() {
 

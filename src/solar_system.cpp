@@ -13,7 +13,15 @@ Solar_System::Solar_System(){
     glPopName();
   }
   calculate();
-} 
+}
+
+void Solar_System::setShader(GLuint handle, PLANET planet) {
+  for(int planInt = SUN; planInt != COMET; planInt++) {
+    if(solar_sys[planInt]->type == planet) {
+      solar_sys[planInt]->registerShader(handle);
+    }
+  }
+}
 
 void Solar_System::calculate(){
   xj=0; yj=0; zj=0;

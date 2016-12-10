@@ -1,6 +1,8 @@
 #ifndef PLANET_H
 #define PLANET_H
 
+#include <GL/glew.h>
+
 #ifdef __APPLE__			// if compiling on Mac OS
 	#include <GLUT/glut.h>
 	#include <OpenGL/gl.h>
@@ -32,6 +34,7 @@ public:
   Vector orbitalVel;
   float radius, mass, toSun, axisTilt, rotationVel, lastTime; 
   vector<Planet> satellites;
+  GLuint shaderHandle;
   //static GLUquadric* obj;
   
   Planet(PLANET planet);
@@ -39,6 +42,7 @@ public:
   void startTime();
   void draw();
   void update();
+  void registerShader(GLuint handle) {shaderHandle = handle;}
 };
 
 #endif

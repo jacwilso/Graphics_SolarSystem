@@ -1,6 +1,8 @@
 #ifndef SOLAR_SYSTEM_H
 #define SOLAR_SYSTEM_H
 
+#include <GL/glew.h>
+
 #ifdef __APPLE__			// if compiling on Mac OS
 	#include <GLUT/glut.h>
 	#include <OpenGL/gl.h>
@@ -33,6 +35,7 @@ public:
   void update();
   void draw();
   void cleanup();
+  void setShader(GLuint,PLANET);
 };
 
 #endif

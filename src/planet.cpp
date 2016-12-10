@@ -107,6 +107,7 @@ Planet::Planet(PLANET planet){
   radius *= EARTH_RADIUS;
   mass *= EARTH_MASS;
   position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
+  shaderHandle = 0;
   //cout<<"[radius] "<<radius<<endl;
   //cout<<"[toSun] "<<toSun<<endl;
 }
@@ -118,6 +119,7 @@ void Planet::startTime(){
 }
 
 void Planet::draw(){
+  glUseProgram(shaderHandle);
   glPushMatrix();
     //glTranslatef(position.getX(), position.getY(), position.getZ());
     glRotatef(axisTilt, 1.0, 0.0, 0.0);
@@ -151,6 +153,7 @@ void Planet::draw(){
       satellites[i].draw();
     glPopMatrix();
   }
+  glUseProgram(0);
 }
 
 void Planet::drawSphere() {
@@ -183,19 +186,19 @@ void Planet::drawSphere() {
               Vector n4 = p4 - Point(0,0,0);
           
               glBegin( GL_QUADS ); {
-                  glTexCoord2f( theta / 6.28, (phi+3.14f) / 6.28 );
+                  //glTexCoord2f( theta / 6.28, (phi+3.14f) / 6.28 );
                   n1.glNormal();
                   p1.glVertex();
               
-                  glTexCoord2f( (theta+thetaStep) / 6.28, (phi+3.14f) / 6.28 );
+                  //glTexCoord2f( (theta+thetaStep) / 6.28, (phi+3.14f) / 6.28 );
                   n2.glNormal();
                   p2.glVertex();
               
-                  glTexCoord2f( (theta+thetaStep) / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
+                  //glTexCoord2f( (theta+thetaStep) / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
                   n4.glNormal();
                   p4.glVertex();
               
-                  glTexCoord2f( theta / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
+                  //glTexCoord2f( theta / 6.28, ((phi+phiStep)+3.14f) / 6.28 );
                   n3.glNormal();
                   p3.glVertex();
               } glEnd();

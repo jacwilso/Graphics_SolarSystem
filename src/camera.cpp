@@ -1,18 +1,33 @@
 #include "camera.h"
 
 void Camera::recomputeOrientation() {
+  // lookAtX = focus->getX();
+  // lookAtY = focus->getY();
+  // lookAtZ = focus->getZ();
+
+  // dirX = radius*sin(theta)*sin(phi);
+  // dirY = -radius*cos(phi);
+  // dirZ = -radius*cos(theta)*sin(phi);
+
+  // x = dirX + focus->getX();
+  // y = dirY + focus->getY();
+  // z = dirZ + focus->getZ();
+
   Vector radius = camPos - camLook;
   camR = radius.mag();
-  camDir = Vector( radius.getX(), radius.getY(), radius.getZ() );
+  // camDir = Vector( radius.getX(), radius.getY(), radius.getZ() );
+  camDir = Vector(  camR*sinf(camTheta)*sinf(camPhi),
+                    -camR*cosf(camTheta),
+                    -camR*cosf(camPhi)*sinf(camPhi));
 
-  camDir.normalize();
+  // camPos = Point( camDir.getX() + camLook.getX(), camDir.getY() + camLook.getY(), camDir.getZ() + camDir.getZ());
+
+  // camDir.normalize();
   radius.normalize();
   camPhi = dot( Vector(-1,0,0), radius );
   camTheta = dot( Vector(0,1,0), radius);
-  /*camDir = Vector(  sinf(cameraTheta)*sinf(cameraPhi),
-                    -cosf(cameraTheta)*sinf(cameraPhi),
-                    -cosf(cameraPhi) );*/
-  glutPostRedisplay();
+  
+  // glutPostRedisplay();
 }
 
 void Camera::gluLook(){
@@ -23,6 +38,10 @@ void Camera::gluLook(){
 }
 
 void Camera::arcBall(){
+  //Move around the camera as our mouse moves
+  camTheta -= (vecPos.getX() - mouseX) * 0.005;
+  camPhi -= (vecPos.getY()- mouseY) * 0.005;
+
   camDir = Vector(  sinf(camTheta)*sinf(camPhi),
     -cosf(camPhi),
     -cosf(camTheta)*sinf(camPhi));
@@ -45,3 +64,4 @@ void Camera::update(){
   }
   recomputeOrientation();
 }
+

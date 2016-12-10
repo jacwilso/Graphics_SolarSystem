@@ -181,25 +181,36 @@ void renderScene(void)  {
   cam.gluLook(); 
   //cam.setLookAt(lookAtX,lookAtY+3.7,lookAtZ); // set the camera's look at
 
-  glPushMatrix();
+  // glPushMatrix();
 
     //drawGrid();
     
-    /*
+    
     glPushMatrix();
       glScalef(1000,1000,1000);
       sky.cubeTexture();
     glPopMatrix();
-    */
+    
 
     // Solar System render here
-    glPushName(1);
-    glPushMatrix();
-      glTranslatef( solar.position.getX(), solar.position.getY(), solar.position.getZ() );
-      solar.draw();
-    glPopMatrix();
-    glPopName();
-    //if solar.pick[i] do something
+  glUseProgram(shaderProgramHandle);
+  GLfloat diffCol[4] = { 0.2, 0.3, 0.6 };
+    GLfloat specCol[4] = { 1.0, 1.0, 0.0 };
+    GLfloat ambCol[4] = { 0.8, 0.8, 0.8 };
+
+    // and now set them for the front and back faces
+    glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, diffCol );
+    glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, specCol );
+    glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, 96.0 );
+    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, ambCol );
+  glPushName(1);
+  glPushMatrix();
+    glTranslatef( solar.position.getX(), solar.position.getY(), solar.position.getZ() );
+    solar.draw();
+  glPopMatrix();
+  glPopName();
+  glUseProgram(0);
+  //if solar.pick[i] do something
 
   if(RenderMode == GL_RENDER)
     glutSwapBuffers();
@@ -362,8 +373,8 @@ void registerCallbacks() {
 }
 
 // setupShaders() //////////////////////////////////////////////////////////////////////
-void setupShaders(char* vertex, char* fragment) {
-  shaderProgramHandle = createShaderProgram(vertex, fragment);
+void setupShaders() {
+  solar.setShader(createShaderProgram("shaders/customShader.v.glsl","shaders/customShader.f.glsl"), SUN);
   // can change to string and use .c_str()
   //"shaders/customShader.v.glsl"
   //"shaders/customShader.f.glsl"
@@ -426,7 +437,7 @@ int main( int argc, char **argv ) {
   initScene();
   printf( "[INFO]: OpenGL Scene set up\n" );
   
-  setupShaders("shaders/particleShader.v.glsl","shaders/particleShader.f.glsl"); // need to pass some variables
+  setupShaders(); // need to pass some variables
   printf( "[INFO]: Shader compilation complete.\n" );
 
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
