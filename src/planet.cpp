@@ -147,6 +147,7 @@ void Planet::draw(){
       GLUquadricObj *myQuad = gluNewQuadric();
       if(textureHandle != 0)
         gluQuadricTexture(myQuad, true);
+      glRotatef(-90, 1, 0, 0);
       gluSphere(myQuad, radius/EARTH_RADIUS, 32, 32);
     glPopMatrix();
   glPopMatrix();

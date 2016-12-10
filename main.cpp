@@ -390,6 +390,11 @@ void loadTextures() {
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.setTexture(texture, SUN);
+
+  texture = SOIL_load_OGL_texture("textures/earth.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setTexture(texture, EARTH);
 }
 
 // setupShaders() //////////////////////////////////////////////////////////////////////
