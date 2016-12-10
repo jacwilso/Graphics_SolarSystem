@@ -38,6 +38,7 @@ using namespace std;
 #include "cubemap.h"
 #include "sound.h"
 #include "planet.h"
+#include "solar_system.h"
 
 // GLOBAL VARIABLES ////////////////////////////////////////////////////////////
 
@@ -53,8 +54,9 @@ int keyState[256];
 GLint menuId;			// handle for our menu
 
 /******** Camera View ********/
-int camera=1;
+int camera=0;
 Camera cam;
+Point newPos, newLook;
 
 /******** SOUND ********/
 int wavSrcs = 0;
@@ -74,14 +76,14 @@ unsigned int PickBuffer[PICK_BUFFER_SIZE];
 int RenderMode;
 int Nhits, dx, dy, nitems, zmin, zmax, item, d;
 GLint GrWindow;
-bool Debug=false;
-vector<bool> pick;
+bool Debug=true;
 
 /******** SHADER ********/
 GLuint shaderProgramHandle = 0;
 
 /******** PLANET ********/
-vector<Planet*> solar_sys;
+Solar_System solar;
+//vector<Planet*> solar_sys;
 
 // resizeWindow() //////////////////////////////////////////////////////////////
 void resizeWindow(int w, int h) {
@@ -127,8 +129,12 @@ void initScene()  {
   glShadeModel(GL_SMOOTH);
 
   // Camera Initialization
-  cam.setCamera(500,500,500,-M_PI / 3.0f,M_PI / 2.8f,700,0,0,0);
+
+  cam.camLook = Point(0,0,0);
+  cam.camPos = Point(500,500,500);
   cam.recomputeOrientation();
+  newPos = cam.camPos;
+  newLook = cam.camLook;
   
   // Skybox Intialization
   for(int i=0; i<6; i++)
@@ -136,20 +142,7 @@ void initScene()  {
   sky.Load(skyFace);
   
   // Solar System Initialization
-  for(int planInt=SUN; planInt!=COMET; planInt++){
-    cout<<planInt<<endl;
-    pick.push_back(false);
-    glPushName(planInt);
-      solar_sys.push_back(new Planet(PLANET(planInt)));
-    glPopName();
-  }
-  for(int i=0; i<pick.size(); i++)
-    cout<<pick[i]<<endl;
-  for(unsigned int i=0; i<solar_sys.size(); i++)
-    solar_sys[i]->startTime();
-  //pick.push_back(false); << for each planet
-  //glPushName(planet) //<< may also need in rendering
-  //glPopName()
+  solar.startTime();
 
   //Sound
   //wav.positionListener(person pos, cam direction,0,1,0);
@@ -176,24 +169,14 @@ void renderScene(void)  {
   
   if(RenderMode==GL_SELECT)
     gluPickMatrix(double(mouseX), (double)(dy-mouseY), PICK_TOL, PICK_TOL, viewport);
+
   gluPerspective(45.0,aspectRatio,0.1,100000);
 
-  glViewport(0,0,windowWidth,windowHeight); // << might not include
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
+  cam.gluLook(); 
   //cam.setLookAt(lookAtX,lookAtY+3.7,lookAtZ); // set the camera's look at
-  switch(camera){
-    case 1:
-      cam.arcBall();
-      break;
-    case 2:
-      cam.freeCam();
-      break;
-  }
-
-  if(RenderMode == GL_SELECT)
-    glInitNames();
 
   glPushMatrix();
 
@@ -207,16 +190,13 @@ void renderScene(void)  {
     */
 
     // Solar System render here
-    for(unsigned int i=0; i<solar_sys.size(); i++){
-      glPushMatrix();
-        glTranslatef(solar_sys[i]->position.getX(), solar_sys[i]->position.getY(), solar_sys[i]->position.getZ()); 
-        solar_sys[i]->draw();
-      glPopMatrix();
-      //if( pick[i] )
-        //cout<<i<<endl;
-    }
-    //if pick[i] do something
-    
+    glPushName(1);
+    glPushMatrix();
+      glTranslatef( solar.position.getX(), solar.position.getY(), solar.position.getZ() );
+      solar.draw();
+    glPopMatrix();
+    glPopName();
+    //if solar.pick[i] do something
 
   if(RenderMode == GL_RENDER)
     glutSwapBuffers();
@@ -224,13 +204,15 @@ void renderScene(void)  {
 
 // mouseCallback() /////////////////////////////////////////////////////////////
 void mouseCallback(int button, int state, int thisX, int thisY) {
-  cam.setMouse(thisX,thisY);
+  cam.mouseX = thisX;
+  cam.mouseY = thisY;
 
   if(button==GLUT_LEFT_BUTTON && glutGetModifiers()==GLUT_ACTIVE_SHIFT && state==GLUT_DOWN){
     RenderMode=GL_SELECT;
     glRenderMode(RenderMode);
     renderScene();
     renderScene();
+    //renderScene();
     RenderMode=GL_RENDER;
     Nhits=glRenderMode(RenderMode);
 #ifdef BUG_KLUDGE
@@ -245,30 +227,32 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
     if(Debug)
       fprintf(stderr,"# pick hits = %d\n", Nhits);
     if(Nhits==0)
-      for(unsigned int k=0; k<pick.size(); k++)
-        pick[k]=false;
+      for(unsigned int k=0; k<solar.pick.size(); k++)
+        solar.pick[k]=false;
     bool picked=false;
     for(int i=0, index=0; i<Nhits; i++){
       //printf("\n");
+      //for(int j=0; j<4; j++)
+        //cout<<PickBuffer[j]<<endl;
       nitems=PickBuffer[index++];
       zmin=PickBuffer[index++];
       zmax=PickBuffer[index++];
-      if(Debug && nitems!=0){
+      if(Debug){
         fprintf(stderr,"Hit # %2d: found %2d items on the name stack\n", i, nitems);
         fprintf(stderr,"\tZmin = 0x%0x, Zmax = 0x%0x\n", zmin, zmax);
       }
       for(int j=0; j<nitems; j++){
         picked=true;
         item=PickBuffer[index++];
-        for(unsigned int k=0; k<pick.size(); k++)
-          pick[k]=false;
-        pick[item-1]=true;
+        for(unsigned int k=0; k<solar.pick.size(); k++)
+          solar.pick[k]=false;
+        solar.pick[item-1]=true;
         if(Debug)
           fprintf(stderr,"\t%2d: %6d\n", j, item);
       }
       if(!picked)
-        for(unsigned int k=0; k<pick.size(); k++)
-          pick[k]=false;
+        for(unsigned int k=0; k<solar.pick.size(); k++)
+          solar.pick[k]=false;
     }
     glutSetWindow(GrWindow);
     glutPostRedisplay();
@@ -280,13 +264,15 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
 // mouseMotion() ///////////////////////////////////////////////////////////////
 void mouseMotion(int x, int y) {
   if(leftMouseButton == GLUT_DOWN){
-    if(glutGetModifiers()==GLUT_ACTIVE_CTRL)
-      cam.setCamR(x,y); // change the camera radius
-    else{
-      cam.setCamAngle(x,y); // change the camera angle
-      cam.setMouse(x,y); // change the internal mouse position
+    if(glutGetModifiers()==GLUT_ACTIVE_CTRL){
+      cam.setCamR(x,y);
     }
-    cam.recomputeOrientation(); // recompute the camera properties
+    else{
+      cam.setCamAngle(x,y);
+      cam.mouseX = x;
+      cam.mouseY = y;
+    }
+    cam.arcBall();
   }
 }
 
@@ -295,26 +281,20 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   keyState[key]=true; // add the key to the keyState map if it isn't already, and set the value to true
   if( key == 'q' || key == 'Q' || key == 27 )
     exit(0);
-  if(key=='`'){// cycle through
-    if(camera<4) camera++; 
-    else camera=1;
+  if(key=='`') camera++; 
+  else if(key=='1') camera=0; // arc ball
+  for(int i=0; i<solar.solar_sys.size(); i++){
+    if(camera == i){
+      newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
+      newLook = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY(), solar.solar_sys[i]->position.getZ()+1 )/EARTH_RADIUS;
+      cam.smooth(newPos, newLook);
+    }
+    cam.recomputeOrientation();
+    //cout<< cam.camPos.getX()<<" "<<cam.camPos.getY()<<" "<<cam.camPos.getZ()<<endl;
   }
-  else if(key=='1') camera=1; // arc ball
-  else if(key=='2') camera=2; // free cam
 }
 
 void specialKeys(int key, int x, int y){
-  if(camera==2){ // if free cam -- change camera movement to arrow keys
-    if(key==GLUT_KEY_UP) 
-      cam.incCam(); // move forward
-    if(key==GLUT_KEY_DOWN)
-      cam.decCam(); // move backward
-    if(key==GLUT_KEY_LEFT)
-      cam.setCamAngle(-4,0); // change angle left
-    if(key==GLUT_KEY_RIGHT)
-      cam.setCamAngle(4,0); // change angle right
-    cam.recomputeOrientation();
-  }
 }
 
 void normalKeysUp(unsigned char key, int x, int y){
@@ -326,9 +306,9 @@ void normalKeys(){}
 // myTimer() ////////////////////////////////////////////////////////////////////
 void myTimer( int value ) {
   normalKeys();
-  for(unsigned int i=0; i<solar_sys.size(); i++)
-    solar_sys[i]->update();
-  
+  solar.update();
+  cam.update();
+
   ALenum sourceState;
   for(int i=0; i<wavSrcs; i++){
     alGetSourcei( wav.sources[i], AL_SOURCE_STATE, &sourceState );
@@ -388,8 +368,7 @@ void setupShaders(char* vertex, char* fragment) {
 // cleanup() //////////////////////////////////////////////////////////////////////
 void cleanup(){
   wav.cleanupOpenAL();
-  for(unsigned int i=0; i<solar_sys.size(); i++)
-    delete solar_sys[i];
+  solar.cleanup();
 }
 
 // main() //////////////////////////////////////////////////////////////////////

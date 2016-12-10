@@ -11,9 +11,9 @@ Planet::Planet(PLANET planet){
   switch(planet){
     case SUN:
       cout<<"SUN"<<endl;
-      radius = SUN_RADIUSE; // Earth radiuses
+      radius = SUN_RADIUS; // Earth radiuses
       mass = 333000; // Earth masses
-      toSun = -SUN_RADIUSE*EARTH_RADIUS; // Mm
+      toSun = 0; // Mm
       axisTilt = 7.25; // degrees
       rotationVel = 7.189*pow(10,3); // km/h 
       satellites.clear();
@@ -104,17 +104,16 @@ Planet::Planet(PLANET planet){
       satellites.clear();
       break;
   }
-  rotationVel /= EARTH_RADIUS;
-  toSun /= EARTH_RADIUS;
-  //toSun *= 1000;
-  position = Point(toSun + SUN_RADIUSE, 0.0, 0.0);
+  radius *= EARTH_RADIUS;
+  mass *= EARTH_MASS;
+  position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
   //cout<<"[radius] "<<radius<<endl;
   //cout<<"[toSun] "<<toSun<<endl;
 }
 
 void Planet::startTime(){
   lastTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
-  for(unsigned int i=0; i<satellites.size(); i++){
+  for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].lastTime = lastTime;
 }
 
@@ -125,18 +124,18 @@ void Planet::draw(){
     
     glDisable(GL_LIGHTING);
       glBegin(GL_LINES);
-        glVertex3f(0, -3*radius/2.0, 0);
-        glVertex3f(0, 3*radius/2.0, 0);
+        glVertex3f(0, -3*radius/(EARTH_RADIUS*2.0), 0);
+        glVertex3f(0, 3*radius/(EARTH_RADIUS*2.0), 0);
       glEnd();
     glEnable(GL_LIGHTING);
 
     glPushMatrix();
       glRotatef(rotation, 0.0, 1, 0.0);
-      glutSolidSphere(radius, 32, 32);
+      glutSolidSphere(radius/EARTH_RADIUS, 32, 32);
       
       glPushMatrix();
         glTranslatef(radius, 0, 0);
-        glutSolidSphere(radius/10.0, 32, 32);
+        glutSolidSphere(radius/(EARTH_RADIUS*10.0), 32, 32);
       glPopMatrix();
     
     glPopMatrix();
@@ -158,6 +157,8 @@ void Planet::update(){
   float timeDiff = currTime - lastTime;
   lastTime = currTime;
   rotation += rotationVel / (2*M_PI*radius) * (180.0 / M_PI ) * timeDiff * 60;
+  //cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
+  //position = Point( position.getX() + timeDiff*orbitalVel.getX(), position.getY() + timeDiff*orbitalVel.getY(), position.getZ() + timeDiff*orbitalVel.getZ() ); 
   for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].update();
 }

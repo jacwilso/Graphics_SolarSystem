@@ -22,7 +22,7 @@
 ########################################
 
 TARGET = sys
-OBJECTS = main.o src/Material.o src/Point.o src/Vector.o src/PointBase.o src/Face.o src/Matrix.o src/camera.o src/helper.o src/cubemap.o src/sound.o src/planet.o
+OBJECTS = main.o src/Material.o src/Point.o src/Vector.o src/PointBase.o src/Face.o src/Matrix.o src/camera.o src/helper.o src/cubemap.o src/sound.o src/planet.o src/solar_system.o
 
 LOCAL_INC_PATH = /Users/jpaone/Desktop/include
 LOCAL_LIB_PATH = /Users/jpaone/Desktop/lib

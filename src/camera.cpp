@@ -1,56 +1,47 @@
 #include "camera.h"
 
-// variables for the look at matrix
-void Camera::setCamera(float cameraX,float cameraY,float cameraZ,float cameraTheta,float cameraPhi,float cameraR,float lookAtX,float lookAtY,float lookAtZ){
-  this->cameraX=cameraX;
-  this->cameraY=cameraY;
-  this->cameraZ=cameraZ;
-  this->cameraTheta=cameraTheta;
-  this->cameraPhi=cameraPhi;
-  this->cameraR=cameraR;
-  this->lookAtX=lookAtX;
-  this->lookAtY=lookAtY;
-  this->lookAtZ=lookAtZ;
-  recomputeOrientation();
-}
-
-// recompute the orientation
 void Camera::recomputeOrientation() {
-  dirX=sinf(cameraTheta)*sinf(cameraPhi);
-  dirZ=-cosf(cameraTheta)*sinf(cameraPhi);
-  dirY=-cosf(cameraPhi);
-  float mag = sqrt( dirX*dirX + dirY*dirY + dirZ*dirZ );
-  dirX /= mag;
-  dirY /= mag;
-  dirZ /= mag;
+  Vector radius = camPos - camLook;
+  camR = radius.mag();
+  camDir = Vector( radius.getX(), radius.getY(), radius.getZ() );
 
+  camDir.normalize();
+  radius.normalize();
+  camPhi = dot( Vector(-1,0,0), radius );
+  camTheta = dot( Vector(0,1,0), radius);
+  /*camDir = Vector(  sinf(cameraTheta)*sinf(cameraPhi),
+                    -cosf(cameraTheta)*sinf(cameraPhi),
+                    -cosf(cameraPhi) );*/
   glutPostRedisplay();
 }
 
-// arc ball look at matrix
+void Camera::gluLook(){
+  gluLookAt(  
+  camPos.getX(),  camPos.getY(),  camPos.getZ(),
+  camLook.getX(), camLook.getY(), camLook.getZ(),
+  0,              1,              0      );
+}
+
 void Camera::arcBall(){
-    gluLookAt(  cameraR*dirX+lookAtX,  -cameraR*dirY+lookAtY,  -cameraR*dirZ+lookAtZ, 
-                lookAtX,  lookAtY,  lookAtZ,
-                0,        1,        0      );
+  camDir = Vector(  sinf(camTheta)*sinf(camPhi),
+    -cosf(camPhi),
+    -cosf(camTheta)*sinf(camPhi));
+  camPos = camLook + camR*camDir;
 }
 
-// free cam look at matrix
-void Camera::freeCam(){
-    gluLookAt(  cameraX, cameraY, cameraZ,
-                cameraX+dirX, cameraY+dirY, cameraZ+dirZ,
-                0.0f,1.0f,0.0f);
+void Camera::smooth(Point newPos, Point newLook){
+  step = 0;
+  vecPos = newPos - camPos;
+  vecLook = newLook - camLook;
+  vecPos /= STEP_SIZE;
+  vecLook /= STEP_SIZE;
 }
 
-// first person look at matrix -- need orientation of object
-void Camera::firstPerson(float objTheta){
-      gluLookAt(  lookAtX,  lookAtY+4,  lookAtZ, 
-                lookAtX-4*cos(objTheta*DEG_RAD),  lookAtY+4,  lookAtZ+4*sin(objTheta*DEG_RAD),
-                0,                                1,        0);
-}
-
-// sky camera look at matrix -- need orientation of object
-void Camera::skyCam(float objTheta){
-      gluLookAt(  lookAtX+4*cos(objTheta*DEG_RAD)+.001,  lookAtY+cameraR,  lookAtZ+.001-4*sin(objTheta*DEG_RAD),
-                lookAtX,  lookAtY,  lookAtZ,
-                0,                                1,        0);
+void Camera::update(){
+  if(step < STEP_SIZE){
+    camPos += vecPos;
+    camLook += vecLook;
+    step++;
+  }
+  recomputeOrientation();
 }

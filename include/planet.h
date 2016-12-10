@@ -18,9 +18,10 @@
 using namespace std;
 
 enum PLANET{SUN,MERCURY,VENUS,EARTH,MARS,JUPITER,SATURN,URANUS,NEPTUNE,COMET};
+const float EARTH_MASS = 5.98 * pow(10, 24);
 const float EARTH_RADIUS = 6371.0; // km
 const float EARTH_TOSUN = 149600; // Mm
-const float SUN_RADIUSE = 109; // Earth radii
+const float SUN_RADIUS = 109; // Earth radii
 class Planet{
 private:
   float rotation;

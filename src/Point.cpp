@@ -9,7 +9,6 @@
 #include <assert.h>
 #include <math.h>
 
-
 	Point::Point() { x = y = z = 0; w = 1; }
 
 	Point::Point( int a, int b, int c ) { 
@@ -27,7 +26,6 @@
 	}
 
 	// OPERATOR OVERLOADS
-
 	Point operator*(Point a, float f) {
 		return Point(a.getX()*f,a.getY()*f,a.getZ()*f);
 	}
