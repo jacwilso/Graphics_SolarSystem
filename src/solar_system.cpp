@@ -12,7 +12,6 @@ Solar_System::Solar_System(){
       solar_sys.push_back(new Planet(PLANET(planInt)));
     glPopName();
   }
-  calculate();
 }
 
 void Solar_System::setShader(GLuint handle, GLuint timeHandle, PLANET planet) {
@@ -31,34 +30,6 @@ void Solar_System::setTexture(GLuint handle, PLANET planet) {
   }
 }
 
-void Solar_System::calculate(){
-  xj=0; yj=0; zj=0;
-  for(unsigned int i=0; i<solar_sys.size(); i++){
-    xDiff[i]=0; yDiff[i]=0; zDiff[0]=0;
-    if(i==0) continue;
-    float rj = pow( pow(solar_sys[i]->position.getX(), 2) + 
-                    pow(solar_sys[i]->position.getY(), 2) + 
-                    pow(solar_sys[i]->position.getZ(), 2), 
-                    0.5 );
-    xj += solar_sys[i]->mass * solar_sys[i]->position.getX() / pow( rj, 3 );
-    yj += solar_sys[i]->mass * solar_sys[i]->position.getY() / pow( rj, 3 );
-    zj += solar_sys[i]->mass * solar_sys[i]->position.getZ() / pow( rj, 3 );
-  }
-  
-  for(unsigned int i=0; i<solar_sys.size(); i++){
-    for(unsigned int j=0; j<solar_sys.size(); j++){
-      if(i==j) continue;
-      float rj = pow( pow(solar_sys[j]->position.getX() - solar_sys[i]->position.getX(), 2) + 
-                      pow(solar_sys[j]->position.getY() - solar_sys[i]->position.getY(), 2) + 
-                      pow(solar_sys[j]->position.getZ() - solar_sys[i]->position.getZ(), 2), 
-                      0.5 );
-      xDiff[i] += G * solar_sys[j]->mass * (solar_sys[j]->position.getX() - solar_sys[i]->position.getX()) / pow( rj, 3 );
-      yDiff[i] += G * solar_sys[j]->mass * (solar_sys[j]->position.getY() - solar_sys[i]->position.getY()) / pow( rj, 3 );
-      zDiff[i] += G * solar_sys[j]->mass * (solar_sys[j]->position.getZ() - solar_sys[i]->position.getZ()) / pow( rj, 3 );
-    }
-  }
-}
-
 void Solar_System::startTime(){
   for(unsigned int i=0; i<solar_sys.size(); i++)
     solar_sys[i]->startTime();
@@ -66,17 +37,15 @@ void Solar_System::startTime(){
 
 void Solar_System::update(){
   for(unsigned int i=0; i<solar_sys.size(); i++){
-    float ax, ay, az;
+    /*
+    Vector F = Vector(0,0,0);
     for(unsigned int j=0; j<solar_sys.size(); j++){
       if(i==j) continue;
-      ax = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getX() / solar_sys[i]->radius - xj + xDiff[i];
-      ay = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getY() / solar_sys[i]->radius - yj + yDiff[i];
-      az = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getZ() / solar_sys[i]->radius - zj + zDiff[i];
-    }  
-    float vx = pow( solar_sys[i]->radius*ax , 0.5 );
-    float vy = pow( solar_sys[i]->radius*ay , 0.5 );
-    float vz = pow( solar_sys[i]->radius*az , 0.5 );
-    solar_sys[i]->orbitalVel = Vector( vx, vy, vz );
+       F += G * solar_sys[i]->mass * solar_sys[j]->mass * (solar_sys[j]->position - solar_sys[i]->position) / pow((solar_sys[j]->position - solar_sys[i]->position).mag(), 3);
+      cout<<"F "<<F.toString()<<endl;
+    }
+    Vector r = solar_sys[i]->position - Point(0,0,0);
+    //solar_sys[i]->orbitalVel = F * r.mag() / solar_sys[i]->mass;*/
     solar_sys[i]->update();
   }
 }
