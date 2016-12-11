@@ -71,5 +71,31 @@ void main(void)
     float af = theColor.a;
 
     // compute the modulated resulting color
-    gl_FragColor = vec4( ct * cf, at * af );
+    vec4 originalColor = vec4( ct * cf, at * af );
+    float intensity;
+    vec4 color;
+    vec3 n = normalize(normalVec);
+    intensity = dot(vec3(gl_LightSource[0].position), n);
+
+    if (intensity > 0.95)
+        color = vec4(1.0*originalColor.r,1*originalColor.g,1*originalColor.b,1.0);
+    else if (intensity > 0.85)
+        color = vec4(0.8*originalColor.r,0.8*originalColor.g,0.8*originalColor.b,1.0);
+    else if (intensity > 0.75)
+        color = vec4(0.7*originalColor.r,0.7*originalColor.g,0.7*originalColor.b,1.0);
+    else if (intensity > 0.65)
+        color = vec4(0.6*originalColor.r,0.6*originalColor.g,0.6*originalColor.b,1.0);
+    else if (intensity > 0.55)
+        color = vec4(0.5*originalColor.r,0.5*originalColor.g,0.5*originalColor.b,1.0);
+    else if (intensity > 0.45)
+        color = vec4(0.4*originalColor.r,0.4*originalColor.g,0.4*originalColor.b,1.0);
+    else if (intensity > 0.35)
+        color = vec4(0.3*originalColor.r,0.3*originalColor.g,0.3*originalColor.b,1.0);
+    else if (intensity > 0.25)
+        color = vec4(0.2*originalColor.r,0.2*originalColor.g,0.2*originalColor.b,1.0);
+    else if (intensity > 0.15)
+        color = vec4(0.1*originalColor.r,0.1*originalColor.g,0.1*originalColor.b,1.0);
+    else
+        color = vec4(0*originalColor.r,0*originalColor.g,0*originalColor.b,1.0);
+    gl_FragColor = color;
 }

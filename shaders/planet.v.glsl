@@ -20,7 +20,7 @@ void main() {
     /********* Vertex Calculations  **********/
     /*****************************************/
 
-    // gl_Vertex = gl_Vertex - (sin(time) + 1) / 50;
+    
 
     // first things, first: set gl_Position equal to the vertex in clip space
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

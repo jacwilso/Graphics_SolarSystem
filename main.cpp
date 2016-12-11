@@ -111,19 +111,20 @@ void initScene()  {
   // this is some code to enable a default light for the scene;
   // feel free to play around with this, but we won't talk about
   // lighting in OpenGL for another couple of weeks yet.
-  float lightCol[4] = { 1, 1, 1, 1};
-  float ambientCol[4] = { 0.0, 0.0, 0.0, 1.0 };
-  float lPosition[4] = { 10, 10, 10, 1 };
-  glLightfv( GL_LIGHT0, GL_POSITION,lPosition );
-  glLightfv( GL_LIGHT0, GL_DIFFUSE,lightCol );
-  glLightfv( GL_LIGHT0, GL_AMBIENT, ambientCol );
   glEnable( GL_LIGHTING );
   glEnable( GL_LIGHT0 );
 
+  float lightCol[4] = { 1, 1, 1, 1};
+  float ambientCol[4] = { 0.0, 0.0, 0.0, 1.0 };
+  float lPosition[4] = { 0, 1.0, 0, 1 };
+  glLightfv( GL_LIGHT0, GL_POSITION,lPosition );
+  glLightfv( GL_LIGHT0, GL_DIFFUSE,lightCol );
+  glLightfv( GL_LIGHT0, GL_AMBIENT, ambientCol );
+
   glDisable(GL_CULL_FACE);
   glEnable(GL_NORMALIZE);
-  glEnable( GL_COLOR_MATERIAL );
-  glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+  // glEnable( GL_COLOR_MATERIAL );
+  // glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
   //******************************************************************
   glInitNames();
   RenderMode = GL_RENDER;
@@ -185,10 +186,10 @@ void renderScene(void)  {
     //drawGrid();
     
     
-    glPushMatrix();
-      glScalef(1000,1000,1000);
-      sky.cubeTexture();
-    glPopMatrix();
+  glPushMatrix();
+    glScalef(1000,1000,1000);
+    sky.cubeTexture();
+  glPopMatrix();
     
 
   // Solar System render here
@@ -199,6 +200,14 @@ void renderScene(void)  {
     solar.draw();
   glPopMatrix();
   glPopName();
+
+  for(int i = 0; i < solar.solar_sys.size(); i++) {
+    if(solar.solar_sys[i]->type == SUN) {
+        Point pos = solar.solar_sys[i]->position;
+        float sunPos[4] = {pos.getX(), pos.getY(), pos.getZ(), 1.0};
+        glLightfv( GL_LIGHT0, GL_POSITION, sunPos);
+    }
+  }
   
   glDisable( GL_TEXTURE_2D );
   //if solar.pick[i] do something
@@ -430,7 +439,7 @@ void loadTextures() {
 // setupShaders() //////////////////////////////////////////////////////////////////////
 // sets up the shaders and then attaches them to the correct planet. 
 void setupShaders() {
-  GLuint sunShader = createShaderProgram("shaders/texture.v.glsl","shaders/texture.f.glsl");
+  GLuint sunShader = createShaderProgram("shaders/sunShader.v.glsl","shaders/sunShader.f.glsl");
   GLuint uniformTimeLoc = glGetUniformLocation(sunShader, "time");
   solar.setShader(sunShader, uniformTimeLoc, SUN);
 
