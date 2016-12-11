@@ -132,9 +132,8 @@ void initScene()  {
 
   // Camera Initialization
 
-  cam.camLook = Point(0,0,0);
-  cam.camPos = Point(500,500,500);
-  cam.recomputeOrientation();
+  cam.initialize( Point( solar.solar_sys[0]->position.getX(), solar.solar_sys[0]->position.getY() + 3.5*solar.solar_sys[0]->radius, solar.solar_sys[0]->position.getZ() )/EARTH_RADIUS, 
+    Point( solar.solar_sys[0]->position.getX(), solar.solar_sys[0]->position.getY(), solar.solar_sys[0]->position.getZ()+1 )/EARTH_RADIUS );
   newPos = cam.camPos;
   newLook = cam.camLook;
   
@@ -295,8 +294,6 @@ void normalKeysDown( unsigned char key, int x, int y ) {
       newLook = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY(), solar.solar_sys[i]->position.getZ()+1 )/EARTH_RADIUS;
       cam.smooth(newPos, newLook);
     }
-    cam.recomputeOrientation();
-    //cout<< cam.camPos.getX()<<" "<<cam.camPos.getY()<<" "<<cam.camPos.getZ()<<endl;
   }
 }
 
