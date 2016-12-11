@@ -455,7 +455,6 @@ void setupShaders() {
   solar.setShader(planetShader, 0, VENUS);
   solar.setShader(planetShader, 0, URANUS);
   solar.setShader(planetShader, 0, NEPTUNE);
-
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////
