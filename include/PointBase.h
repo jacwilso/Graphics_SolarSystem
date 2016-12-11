@@ -1,7 +1,6 @@
 #ifndef _POINTBASE_H_
 #define _POINTBASE_H_ 1
 
-
 	
 	class PointBase {
 	public:
@@ -38,6 +37,5 @@
 		// MEMBER VARIABLES
 		double x,y,z,w;
 	};
-
 
 #endif

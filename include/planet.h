@@ -32,7 +32,7 @@ public:
   PLANET type;
   Point position;
   Vector orbitalVel;
-  float radius, mass, toSun, axisTilt, rotationVel, lastTime; 
+  float radius, mass, toSun, axisTilt, rotationVel, orbitVel, theta, lastTime; 
   vector<Planet> satellites;
   GLuint shaderHandle, textureHandle, shaderTimeLoc, specularHandle;
   //static GLUquadric* obj;

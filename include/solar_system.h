@@ -37,6 +37,7 @@ public:
   void cleanup();
   void setShader(GLuint, GLuint, PLANET);
   void setTexture(GLuint, PLANET);
+  void newPlanet();
   void specularTexture(GLuint, PLANET);
 };
 

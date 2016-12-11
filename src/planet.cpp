@@ -8,6 +8,7 @@ Planet::Planet(PLANET planet){
   //gluQuadricNormals(obj,GL_SMOOTH);
   type = planet;
   rotation = 0;
+  theta = 0;
   switch(planet){
     case SUN:
       cout<<"SUN"<<endl;
@@ -16,6 +17,7 @@ Planet::Planet(PLANET planet){
       toSun = 0; // Mm
       axisTilt = 7.25; // degrees
       rotationVel = 7.189*pow(10,3); // km/h 
+      orbitVel = 0; // km/s
       satellites.clear();
       break;
     case MERCURY:
@@ -25,6 +27,7 @@ Planet::Planet(PLANET planet){
       toSun = 57910; 
       axisTilt = 2.04;
       rotationVel = 10.892; // km/h
+      orbitVel = 47.87;
       satellites.clear();
       break;
     case VENUS:
@@ -34,6 +37,7 @@ Planet::Planet(PLANET planet){
       toSun = 108200;
       axisTilt = 177.36;
       rotationVel = 6.52;
+      orbitVel = 35.02;
       satellites.clear();
       break;
     case EARTH:
@@ -43,6 +47,7 @@ Planet::Planet(PLANET planet){
       toSun = EARTH_TOSUN; 
       axisTilt = 23.4392811;
       rotationVel = 1674.4;
+      orbitVel = 29.78;
       //satellites.push_back(COMET);
       break;
     case MARS:
@@ -51,15 +56,18 @@ Planet::Planet(PLANET planet){
       toSun = 227940;
       axisTilt = 25.19;
       rotationVel = 868.22;
+      orbitVel = 24.077;
       //for(int i=0; i<2; i++)
         //satellites.push_back(COMET);
       break;
     case JUPITER:
+      cout<<"JUPITER"<<endl;
       radius = 11.209;
       mass = 317.8;
       toSun = 778330;
       axisTilt = 3.13;
       rotationVel = 12.6;
+      orbitVel = 13.07;
       //for(int i=0; i<67; i++)
         //satellites.push_back(COMET);
       break;
@@ -70,6 +78,7 @@ Planet::Planet(PLANET planet){
       toSun = 1424600;
       axisTilt = 26.73;
       rotationVel = 9.87;
+      orbitVel = 9.69;
       //for(int i=0; i<62; i++)
         //satellites.push_back(COMET);
       break;
@@ -80,6 +89,7 @@ Planet::Planet(PLANET planet){
       toSun = 2873550;
       axisTilt = 97.77;
       rotationVel = 2.59;
+      orbitVel = 6.81;
       //for(int i=0; i<27; i++)
         //satellites.push_back(COMET);
       break;
@@ -90,6 +100,7 @@ Planet::Planet(PLANET planet){
       toSun = 4501000;
       axisTilt = 28.32;
       rotationVel = 2.68;
+      orbitVel = 5.43;
       //for(int i=0; i<14; i++)
         //satellites.push_back(COMET);
       break;
@@ -244,10 +255,12 @@ void Planet::drawSphere() {
 void Planet::update(){
   float currTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
   float timeDiff = currTime - lastTime;
+  rotation += 360 * rotationVel / (2*M_PI*radius) * timeDiff * 60;
+  float arcLength = orbitVel*timeDiff;
+  theta += arcLength/radius;
+  float radi = (position - Point(0,0,0)).mag();
+  position = Point(radi*cos(theta), position.getY(), radi*sin(theta));
   lastTime = currTime;
-  rotation += rotationVel / (2*M_PI*radius) * (180.0 / M_PI ) * timeDiff * 60;
-  //cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
-  //position = Point( position.getX() + timeDiff*orbitalVel.getX(), position.getY() + timeDiff*orbitalVel.getY(), position.getZ() + timeDiff*orbitalVel.getZ() ); 
   for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].update();
 }

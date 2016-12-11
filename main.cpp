@@ -270,14 +270,16 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
     }
     glutSetWindow(GrWindow);
     glutPostRedisplay();
-  }
-  else if(button == GLUT_LEFT_BUTTON)
+  } else if( button == GLUT_LEFT_BUTTON )
       leftMouseButton = state;
+  else if( button == GLUT_RIGHT_BUTTON )
+    int tmp = 0;
+    //solar.newPlanet();
 }
 
 // mouseMotion() ///////////////////////////////////////////////////////////////
 void mouseMotion(int x, int y) {
-  if(leftMouseButton == GLUT_DOWN){
+  if( leftMouseButton == GLUT_DOWN ){
     if(glutGetModifiers()==GLUT_ACTIVE_CTRL){
       cam.setCamR(x,y);
     }
@@ -287,7 +289,7 @@ void mouseMotion(int x, int y) {
       cam.mouseY = y;
     }
     cam.arcBall();
-  }
+  } 
 }
 
 // normalKeys() ////////////////////////////////////////////////////////////
@@ -295,8 +297,11 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   keyState[key]=true; // add the key to the keyState map if it isn't already, and set the value to true
   if( key == 'q' || key == 'Q' || key == 27 )
     exit(0);
-  if(key=='`') camera++; 
-  else if(key=='1') camera=0; // arc ball
+  if(key=='`'){ 
+    if(camera == solar.solar_sys.size() ) camera = 0;
+    else camera++; 
+  }
+  if(key=='1') camera=0; // arc ball
   for(int i=0; i<solar.solar_sys.size(); i++){
     if(camera == i){
       newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
