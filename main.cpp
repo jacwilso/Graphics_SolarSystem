@@ -146,6 +146,7 @@ void initScene()  {
   // Solar System Initialization
   solar.startTime();
 
+
   //Sound
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
   //wav.positionListener(person pos, cam direction,0,1,0);
@@ -270,16 +271,14 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
     }
     glutSetWindow(GrWindow);
     glutPostRedisplay();
-  } else if( button == GLUT_LEFT_BUTTON )
+  }
+  else if(button == GLUT_LEFT_BUTTON)
       leftMouseButton = state;
-  else if( button == GLUT_RIGHT_BUTTON )
-    int tmp = 0;
-    //solar.newPlanet();
 }
 
 // mouseMotion() ///////////////////////////////////////////////////////////////
 void mouseMotion(int x, int y) {
-  if( leftMouseButton == GLUT_DOWN ){
+  if(leftMouseButton == GLUT_DOWN){
     if(glutGetModifiers()==GLUT_ACTIVE_CTRL){
       cam.setCamR(x,y);
     }
@@ -289,7 +288,7 @@ void mouseMotion(int x, int y) {
       cam.mouseY = y;
     }
     cam.arcBall();
-  } 
+  }
 }
 
 // normalKeys() ////////////////////////////////////////////////////////////
@@ -297,11 +296,8 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   keyState[key]=true; // add the key to the keyState map if it isn't already, and set the value to true
   if( key == 'q' || key == 'Q' || key == 27 )
     exit(0);
-  if(key=='`'){ 
-    if(camera == solar.solar_sys.size() ) camera = 0;
-    else camera++; 
-  }
-  if(key=='1') camera=0; // arc ball
+  if(key=='`') camera++; 
+  else if(key=='1') camera=0; // arc ball
   for(int i=0; i<solar.solar_sys.size(); i++){
     if(camera == i){
       newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
@@ -324,7 +320,7 @@ void normalKeys(){}
 void myTimer( int value ) {
   normalKeys();
   solar.update();
-  cam.update();
+  cam.update(Point(solar.solar_sys[camera]->position.getX(), solar.solar_sys[camera]->position.getY(), solar.solar_sys[camera]->position.getZ())/EARTH_RADIUS);
 
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
   /*ALenum sourceState;
@@ -400,11 +396,6 @@ void loadTextures() {
   registerTexture();
   solar.setTexture(texture, SUN);
 
-  texture = SOIL_load_OGL_texture("textures/sun_specular2.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  registerTexture();
-  solar.specularTexture(texture, SUN);  
-
   texture = SOIL_load_OGL_texture("textures/earth.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
@@ -462,6 +453,7 @@ void setupShaders() {
   solar.setShader(planetShader, 0, VENUS);
   solar.setShader(planetShader, 0, URANUS);
   solar.setShader(planetShader, 0, NEPTUNE);
+
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////

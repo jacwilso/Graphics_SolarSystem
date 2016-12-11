@@ -40,11 +40,19 @@ void Camera::smooth(Point newPos, Point newLook){
   camTheta = 0;
 }
 
-void Camera::update(){
+void Camera::track(Point pos){
+  Vector moveVec = pos - camLook;
+  camLook = pos;
+  camPos += moveVec;
+}
+
+void Camera::update(Point tracking){
   if(step < STEP_SIZE){
     camPos += vecPos;
     camLook += vecLook;
     step++;
+  }else{
+    track(tracking);
   }
   recomputeOrientation();
 }

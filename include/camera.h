@@ -24,10 +24,12 @@ class Camera{
   private:
     float camR;
     int step;
+
     Vector vecPos, vecLook;
   public: 
     Point camPos, camLook;
     Vector camDir;
+    
     float mouseX, mouseY, camTheta, camPhi;
 
     void initialize(Point pos, Point look);
@@ -44,7 +46,8 @@ class Camera{
     void gluLook();
     void arcBall();
     void smooth(Point newPos, Point newLook);
-    void update();
+    void track(Point);
+    void update(Point);
 };
 
 #endif
