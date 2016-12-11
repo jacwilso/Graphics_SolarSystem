@@ -36,6 +36,8 @@ void Camera::smooth(Point newPos, Point newLook){
   vecLook = newLook - camLook;
   vecPos /= STEP_SIZE;
   vecLook /= STEP_SIZE;
+  camPhi = 0;
+  camTheta = 0;
 }
 
 void Camera::update(){
