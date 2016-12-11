@@ -65,18 +65,43 @@ void Solar_System::startTime(){
 }
 
 void Solar_System::update(){
+  // for(unsigned int i=0; i<solar_sys.size(); i++){
+  //   float ax, ay, az;
+  //   for(unsigned int j=0; j<solar_sys.size(); j++){
+  //     if(i==j) continue;
+  //     ax = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getX() / solar_sys[i]->radius - xj + xDiff[i];
+  //     ay = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getY() / solar_sys[i]->radius - yj + yDiff[i];
+  //     az = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getZ() / solar_sys[i]->radius - zj + zDiff[i];
+  //   }  
+  //   float vx = pow( solar_sys[i]->radius*ax , 0.5 );
+  //   float vy = pow( solar_sys[i]->radius*ay , 0.5 );
+  //   float vz = pow( solar_sys[i]->radius*az , 0.5 );
+  //   solar_sys[i]->orbitalVel = Vector( vx, vy, vz );
+
+
+  //   solar_sys[i]->update();
+  // }
+  Planet* sun;
   for(unsigned int i=0; i<solar_sys.size(); i++){
-    float ax, ay, az;
-    for(unsigned int j=0; j<solar_sys.size(); j++){
-      if(i==j) continue;
-      ax = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getX() / solar_sys[i]->radius - xj + xDiff[i];
-      ay = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getY() / solar_sys[i]->radius - yj + yDiff[i];
-      az = -1*G*(solar_sys[i]->mass + solar_sys[j]->mass)*solar_sys[i]->position.getZ() / solar_sys[i]->radius - zj + zDiff[i];
-    }  
-    float vx = pow( solar_sys[i]->radius*ax , 0.5 );
-    float vy = pow( solar_sys[i]->radius*ay , 0.5 );
-    float vz = pow( solar_sys[i]->radius*az , 0.5 );
-    solar_sys[i]->orbitalVel = Vector( vx, vy, vz );
+    if(solar_sys[i]->type == SUN){
+      sun = solar_sys[i];
+      break;
+    }
+  }
+
+  for(unsigned int i=0; i<solar_sys.size(); i++){
+    if(i==0)continue;
+    Vector orbitalVelDir = cross(solar_sys[i]->position - sun->position,Vector(0,1,0));
+    orbitalVelDir.normalize();
+    cout << "Planet " << i << " " << solar_sys[i]->type << endl;
+    cout << G << " " << sun->mass << " " << solar_sys[i]->toSun * pow(10, 6)<< endl;
+    cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
+
+    float orbitalVelMag = sqrt((G*sun->mass)/(solar_sys[i]->toSun* pow(10, 6)));
+    orbitalVelDir *= orbitalVelMag;
+    cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
+    cout << endl;
+    solar_sys[i]->orbitalVel = orbitalVelDir;
     solar_sys[i]->update();
   }
 }
