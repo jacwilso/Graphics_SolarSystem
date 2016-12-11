@@ -218,7 +218,7 @@ void renderScene(void)  {
     
     
   glPushMatrix();
-    glScalef(1000,1000,1000);
+    glScalef(1500,1500,1500);
     sky.cubeTexture();
   glPopMatrix();
     
@@ -236,6 +236,7 @@ void renderScene(void)  {
         Point pos = solar.solar_sys[i]->position;
         float sunPos[4] = {pos.getX(), pos.getY(), pos.getZ(), 1.0};
         glLightfv( GL_LIGHT0, GL_POSITION, sunPos);
+        break;
     }
   }
   
