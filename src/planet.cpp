@@ -126,8 +126,26 @@ Planet::Planet(PLANET planet){
   //cout<<"[toSun] "<<toSun<<endl;
 }
 
+Planet::Planet(Point position, float radius, float mass, float axisTilt, float rotationVel, Vector orbitalVel){
+  type = COMET;
+  rotation = 0;
+  theta = 0;
+  this->radius = radius;
+  this->mass = mass;
+  this->toSun = (position - Point(0,0,0)).mag();
+  this->axisTilt = axisTilt;
+  this->rotationVel = rotationVel;
+  this->orbitalVel = orbitalVel;
+  radius *= EARTH_RADIUS;
+  mass *= EARTH_MASS;
+  shaderHandle = 0;
+  textureHandle = 0;
+  specularHandle = 0;
+  easterEgg = false;
+}
+
 void Planet::startTime(){
-  lastTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+lastTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
   for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].lastTime = lastTime;
 }
@@ -214,7 +232,7 @@ void Planet::update(){
   rotation += rotationVel / (2*M_PI*radius) * (180.0 / M_PI ) * timeDiff * 60;
   
   if(this->type != SUN){
-    cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
+    //cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
     position = Point( position.getX() + timeDiff*orbitalVel.getX(), position.getY() + timeDiff*orbitalVel.getY(), position.getZ() + timeDiff*orbitalVel.getZ() ); 
   }
   for(unsigned int i=0; i<satellites.size(); i++)

@@ -113,14 +113,17 @@ void Solar_System::update(){
     if(i==0)continue;
     Vector orbitalVelDir = cross(solar_sys[i]->position - sun->position,Vector(0,1,0));
     orbitalVelDir.normalize();
+    /*
     cout << "Planet " << i << " " << solar_sys[i]->type << endl;
     cout << G << " " << sun->mass << " " << solar_sys[i]->toSun * pow(10, 6)<< endl;
     cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
-
+    */
     float orbitalVelMag = sqrt((G*sun->mass)/(solar_sys[i]->toSun* pow(10, 6)));
     orbitalVelDir *= orbitalVelMag;
+    /*
     cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
     cout << endl;
+    */
     solar_sys[i]->orbitalVel = orbitalVelDir;
 
     solar_sys[i]->update();
@@ -136,12 +139,17 @@ void Solar_System::draw(){
       else glColor3f(1,1,1);
       solar_sys[i]->draw();
     glPopMatrix();
-      //if( solar.pick[i] )
-        //cout<<i<<endl;
+    if( pick[i] )
+      cout<<i<<endl;
   }
 }
 
 void Solar_System::cleanup(){
   for(unsigned int i=0; i<solar_sys.size(); i++)
     delete solar_sys[i];
+}
+
+void Solar_System::newPlanet(Point position){
+  //solar_sys.push_back(new Planet(position, EARTH_RADIUS/2.0, EARTH_MASS/3.0, ));
+  //solar_sys[solar_sys.size()-1].startTime();
 }

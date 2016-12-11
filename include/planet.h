@@ -39,7 +39,7 @@ public:
   //static GLUquadric* obj;
   
   Planet(PLANET planet);
-  Planet(Point position, float radius, float mass, float toSun, float axisTilt, float rotationVel, Vector orbitalVel);
+  Planet(Point position, float radius, float mass, float axisTilt, float rotationVel, Vector orbitalVel);
   void startTime();
   void draw();
   void update();
