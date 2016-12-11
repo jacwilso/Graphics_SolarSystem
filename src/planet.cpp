@@ -120,6 +120,7 @@ Planet::Planet(PLANET planet){
   position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
   shaderHandle = 0;
   textureHandle = 0;
+  specularHandle = 0;
   //cout<<"[radius] "<<radius<<endl;
   //cout<<"[toSun] "<<toSun<<endl;
 }
@@ -132,10 +133,14 @@ void Planet::startTime(){
 
 void Planet::draw(){
   // specify each of our material component colors
-  GLfloat diffCol[4] = { 1.0, 1.0, 1.0 };         // a nice blue color for diffuse 
-  GLfloat specCol[4] = { 1.0, 1.0, 1.0 };         // yellow specular highlights
-  GLfloat ambCol[4] = { 0, 0, 0 };          // this value can be large because the final value
-                              // of our ambient light will be this * lightAmbient
+  GLfloat diffCol[4] = { 1.0, 1.0, 1.0 };
+  GLfloat specCol[4] = { 0.2, 0.2, 0.2 };
+  if(type == SUN) {
+    specCol[0] = 1.0;
+    specCol[1] = 1.0;
+    specCol[2] = 1.0;
+  }
+  GLfloat ambCol[4] = { 0, 0, 0 };
   
   // and now set them for the front and back faces
   glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, diffCol );
@@ -159,8 +164,12 @@ void Planet::draw(){
       
       // enable textures.
       glEnable( GL_TEXTURE_2D );
-      glColor4f(1,1,1,1);
+      glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, textureHandle);
+      if(specularHandle != 0) {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, specularHandle);
+      } 
       // enable shader
       glUseProgram(shaderHandle);
 
