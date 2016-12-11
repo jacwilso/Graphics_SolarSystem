@@ -22,7 +22,7 @@
 ########################################
 
 TARGET = sys
-OBJECTS = main.o src/Material.o src/Point.o src/Vector.o src/PointBase.o src/Face.o src/Matrix.o src/camera.o src/helper.o src/cubemap.o src/sound.o src/planet.o src/solar_system.o
+OBJECTS = main.o src/Material.o src/Point.o src/Vector.o src/PointBase.o src/Face.o src/Matrix.o src/camera.o src/helper.o src/cubemap.o src/planet.o src/solar_system.o
 
 LOCAL_INC_PATH = /Users/jpaone/Desktop/include
 LOCAL_LIB_PATH = /Users/jpaone/Desktop/lib
@@ -32,7 +32,7 @@ BUILDING_IN_LAB = 1
 
 USING_GLEW = 1
 USING_GLUI = 0
-USING_OPENAL = 1
+USING_OPENAL = 0
 USING_OPENGL = 1
 USING_SOIL = 1
 
@@ -46,11 +46,21 @@ USING_SOIL = 1
 
 
 
+
+
 #############################
 ## COMPILING INFO
 #############################
 
-CXX    = g++
+ifeq ($(OS), Windows_NT)
+	ifeq ($(BUILDING_IN_LAB), 1)
+		CXX = C:/Strawberry/c/bin/g++.exe
+	else
+		CXX = g++
+	endif
+else
+	CXX    = g++
+endif
 CFLAGS = -Wall -g
 
 INCPATH += -I./include
@@ -69,6 +79,12 @@ ifeq ($(BUILDING_IN_LAB), 0)
         LAB_LIB_PATH = $(LOCAL_LIB_PATH)
         LAB_BIN_PATH = $(LOCAL_BIN_PATH)
     endif
+endif
+
+ifeq ($(OS), Windows_NT)
+	RM = del
+else
+	RM = rm
 endif
 
 #############################
@@ -162,7 +178,7 @@ ifeq ($(USING_GLEW), 1)
 	else
         INCPATH += -I$(LOCAL_INC_PATH)
         LIBPATH += -L$(LOCAL_LIB_PATH)
-		LIBS += -lGLEW
+		LIBS += -lglew
 		WINDOWS_GLEW = 0
     endif
 else
@@ -206,29 +222,11 @@ endif
 
 all: $(TARGET)
 
-test: all
-	./$(TARGET)
-
 clean:
-	rm -f $(OBJECTS) $(TARGET)
-	if [ $(USING_OPENAL) -eq 1 ]; \
-	then \
-		if [ $(WINDOWS_AL) -eq 1 ]; \
-		then \
-			rm OpenAL32.dll; \
-			rm libalut.dll; \
-		fi \
-	fi 
-	if [ $(USING_GLEW) -eq 1 ]; \
-	then \
-		if [ $(WINDOWS_GLEW) -eq 1 ]; \
-		then \
-			rm cygGLEW-1-13.dll; \
-		fi \
-	fi  
+	$(RM) -f $(OBJECTS) $(TARGET)
 
 depend:
-	rm -f Makefile.bak
+	$(RM) -f Makefile.bak
 	mv Makefile Makefile.bak
 	sed '/^# DEPENDENCIES/,$$d' Makefile.bak > Makefile
 	echo '# DEPENDENCIES' >> Makefile
@@ -245,21 +243,7 @@ depend:
 
 $(TARGET): $(OBJECTS) 
 	$(CXX) $(CFLAGS) $(INCPATH) -o $@ $^ $(LIBPATH) $(LIBS)
-	if [ $(USING_OPENAL) -eq 1 ]; \
-	then \
-		if [ $(WINDOWS_AL) -eq 1 ]; \
-		then \
-			cp $(LAB_BIN_PATH)/OpenAL32.dll .; \
-			cp $(LAB_BIN_PATH)/libalut.dll .; \
-		fi \
-	fi    
-	if [ $(USING_GLEW) -eq 1 ]; \
-	then \
-		if [ $(WINDOWS_GLEW) -eq 1 ]; \
-		then \
-			cp $(LAB_BIN_PATH)/cygGLEW-1-13.dll .; \
-		fi \
-	fi  
+
 
 # DEPENDENCIES
 main.o: main.cpp
