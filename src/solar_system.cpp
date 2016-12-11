@@ -30,8 +30,6 @@ void Solar_System::setTexture(GLuint handle, PLANET planet) {
   }
 }
 
-<<<<<<< HEAD
-=======
 void Solar_System::specularTexture(GLuint handle, PLANET planet) {
   for(int planInt = SUN; planInt != COMET; planInt++) {
     if(solar_sys[planInt]->type == planet) {
@@ -68,7 +66,6 @@ void Solar_System::calculate(){
   }
 }
 
->>>>>>> c15c19179392b1484a1c923df9b84187a4038a92
 void Solar_System::startTime(){
   for(unsigned int i=0; i<solar_sys.size(); i++)
     solar_sys[i]->startTime();
