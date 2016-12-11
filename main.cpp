@@ -395,7 +395,7 @@ void loadTextures() {
   registerTexture();
   solar.setTexture(texture, SUN);
 
-  texture = SOIL_load_OGL_texture("textures/sun_specular.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  texture = SOIL_load_OGL_texture("textures/sun_specular2.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.specularTexture(texture, SUN);  

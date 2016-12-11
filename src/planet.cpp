@@ -150,17 +150,20 @@ void Planet::draw(){
 
     glPushMatrix();
       glRotatef(rotation, 0.0, 1, 0.0);
-      
+
+      // enable shader
+      glUseProgram(shaderHandle);
       // enable textures.
       glEnable( GL_TEXTURE_2D );
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, textureHandle);
       if(specularHandle != 0) {
+        // std::cout << "Ahhhhhh!" << std::endl;
+        GLuint displacementMap_location = glGetUniformLocation(shaderHandle, "displacementMap");
+        glUniform1i(displacementMap_location, 1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularHandle);
       } 
-      // enable shader
-      glUseProgram(shaderHandle);
 
       glUniform1f(shaderTimeLoc, glutGet(GLUT_ELAPSED_TIME)/1000.0f);
       // drawSphere();
