@@ -255,12 +255,15 @@ void Planet::drawSphere() {
 void Planet::update(){
   float currTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
   float timeDiff = currTime - lastTime;
-  rotation += 360 * rotationVel / (2*M_PI*radius) * timeDiff * 60;
-  float arcLength = orbitVel*timeDiff;
-  theta += arcLength/radius;
-  float radi = (position - Point(0,0,0)).mag();
-  position = Point(radi*cos(theta), position.getY(), radi*sin(theta));
+ 
   lastTime = currTime;
+
+  rotation += rotationVel / (2*M_PI*radius) * (180.0 / M_PI ) * timeDiff * 60;
+  
+  if(this->type != SUN){
+    cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
+    position = Point( position.getX() + timeDiff*orbitalVel.getX(), position.getY() + timeDiff*orbitalVel.getY(), position.getZ() + timeDiff*orbitalVel.getZ() ); 
+  }
   for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].update();
 }
