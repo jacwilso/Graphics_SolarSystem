@@ -8,6 +8,7 @@ Planet::Planet(PLANET planet){
   //gluQuadricNormals(obj,GL_SMOOTH);
   type = planet;
   rotation = 0;
+  theta = 0;
   switch(planet){
     case SUN:
       cout<<"SUN"<<endl;
@@ -16,6 +17,7 @@ Planet::Planet(PLANET planet){
       toSun = 0; // Mm
       axisTilt = 7.25; // degrees
       rotationVel = 7.189*pow(10,3); // km/h 
+      orbitVel = 0; // km/s
       satellites.clear();
       break;
     case MERCURY:
@@ -25,6 +27,7 @@ Planet::Planet(PLANET planet){
       toSun = 57910; 
       axisTilt = 2.04;
       rotationVel = 10.892; // km/h
+      orbitVel = 47.87;
       satellites.clear();
       break;
     case VENUS:
@@ -34,6 +37,7 @@ Planet::Planet(PLANET planet){
       toSun = 108200;
       axisTilt = 177.36;
       rotationVel = 6.52;
+      orbitVel = 35.02;
       satellites.clear();
       break;
     case EARTH:
@@ -43,6 +47,7 @@ Planet::Planet(PLANET planet){
       toSun = EARTH_TOSUN; 
       axisTilt = 23.4392811;
       rotationVel = 1674.4;
+      orbitVel = 29.78;
       //satellites.push_back(COMET);
       break;
     case MARS:
@@ -51,15 +56,18 @@ Planet::Planet(PLANET planet){
       toSun = 227940;
       axisTilt = 25.19;
       rotationVel = 868.22;
+      orbitVel = 24.077;
       //for(int i=0; i<2; i++)
         //satellites.push_back(COMET);
       break;
     case JUPITER:
+      cout<<"JUPITER"<<endl;
       radius = 11.209;
       mass = 317.8;
       toSun = 778330;
       axisTilt = 3.13;
       rotationVel = 12.6;
+      orbitVel = 13.07;
       //for(int i=0; i<67; i++)
         //satellites.push_back(COMET);
       break;
@@ -70,6 +78,7 @@ Planet::Planet(PLANET planet){
       toSun = 1424600;
       axisTilt = 26.73;
       rotationVel = 9.87;
+      orbitVel = 9.69;
       //for(int i=0; i<62; i++)
         //satellites.push_back(COMET);
       break;
@@ -80,6 +89,7 @@ Planet::Planet(PLANET planet){
       toSun = 2873550;
       axisTilt = 97.77;
       rotationVel = 2.59;
+      orbitVel = 6.81;
       //for(int i=0; i<27; i++)
         //satellites.push_back(COMET);
       break;
@@ -90,6 +100,7 @@ Planet::Planet(PLANET planet){
       toSun = 4501000;
       axisTilt = 28.32;
       rotationVel = 2.68;
+      orbitVel = 5.43;
       //for(int i=0; i<14; i++)
         //satellites.push_back(COMET);
       break;
@@ -109,6 +120,7 @@ Planet::Planet(PLANET planet){
   position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
   shaderHandle = 0;
   textureHandle = 0;
+  specularHandle = 0;
   //cout<<"[radius] "<<radius<<endl;
   //cout<<"[toSun] "<<toSun<<endl;
 }
@@ -121,10 +133,14 @@ void Planet::startTime(){
 
 void Planet::draw(){
   // specify each of our material component colors
-  GLfloat diffCol[4] = { 1.0, 1.0, 1.0 };         // a nice blue color for diffuse 
-  GLfloat specCol[4] = { 1.0, 1.0, 1.0 };         // yellow specular highlights
-  GLfloat ambCol[4] = { 0, 0, 0 };          // this value can be large because the final value
-                              // of our ambient light will be this * lightAmbient
+  GLfloat diffCol[4] = { 1.0, 1.0, 1.0 };
+  GLfloat specCol[4] = { 0.2, 0.2, 0.2 };
+  if(type == SUN) {
+    specCol[0] = 1.0;
+    specCol[1] = 1.0;
+    specCol[2] = 1.0;
+  }
+  GLfloat ambCol[4] = { 0, 0, 0 };
   
   // and now set them for the front and back faces
   glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, diffCol );
@@ -145,13 +161,20 @@ void Planet::draw(){
 
     glPushMatrix();
       glRotatef(rotation, 0.0, 1, 0.0);
-      
-      // enable textures.
-      glEnable( GL_TEXTURE_2D );
-      glColor4f(1,1,1,1);
-      glBindTexture(GL_TEXTURE_2D, textureHandle);
+
       // enable shader
       glUseProgram(shaderHandle);
+      // enable textures.
+      glEnable( GL_TEXTURE_2D );
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, textureHandle);
+      if(specularHandle != 0) {
+        // std::cout << "Ahhhhhh!" << std::endl;
+        GLuint displacementMap_location = glGetUniformLocation(shaderHandle, "displacementMap");
+        glUniform1i(displacementMap_location, 1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, specularHandle);
+      } 
 
       glUniform1f(shaderTimeLoc, glutGet(GLUT_ELAPSED_TIME)/1000.0f);
       // drawSphere();
@@ -232,7 +255,9 @@ void Planet::drawSphere() {
 void Planet::update(){
   float currTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
   float timeDiff = currTime - lastTime;
+ 
   lastTime = currTime;
+
   rotation += rotationVel / (2*M_PI*radius) * (180.0 / M_PI ) * timeDiff * 60;
   
   if(this->type != SUN){

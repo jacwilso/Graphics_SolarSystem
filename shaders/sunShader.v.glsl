@@ -7,10 +7,14 @@
 
 #version 120
 
+varying vec2 vertex_uv;
 varying vec3 normalVec;
 varying vec3 lightVec;
 varying vec3 halfwayVec;
 varying float attenuation;
+varying vec4 shitColor;
+
+uniform sampler2D displacementMap;
 
 uniform float time;
 
@@ -20,11 +24,17 @@ void main() {
     /********* Vertex Calculations  **********/
     /*****************************************/
 
-    gl_Vertex = gl_Vertex - (sin(time) + 1) / 50;
+    vec4 newVertexPos;
+    vec4 distance;
 
-    // first things, first: set gl_Position equal to the vertex in clip space
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    distance = texture2D( displacementMap, gl_MultiTexCoord0.xy );
 
+    newVertexPos = (vec4(gl_Normal * distance.xyz * 10.0, 0.0)) + gl_Vertex;
+
+    gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
+    gl_Vertex = newVertexPos;
+
+    // gl_Vertex = newVertexPos;
     /*****************************************/
     /********* Texture Calculations  *********/
     /*****************************************/

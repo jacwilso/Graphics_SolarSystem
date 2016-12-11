@@ -12,7 +12,6 @@ Solar_System::Solar_System(){
       solar_sys.push_back(new Planet(PLANET(planInt)));
     glPopName();
   }
-  calculate();
 }
 
 void Solar_System::setShader(GLuint handle, GLuint timeHandle, PLANET planet) {
@@ -27,6 +26,14 @@ void Solar_System::setTexture(GLuint handle, PLANET planet) {
   for(int planInt = SUN; planInt != COMET; planInt++) {
     if(solar_sys[planInt]->type == planet) {
       solar_sys[planInt]->registerTexture(handle);
+    }
+  }
+}
+
+void Solar_System::specularTexture(GLuint handle, PLANET planet) {
+  for(int planInt = SUN; planInt != COMET; planInt++) {
+    if(solar_sys[planInt]->type == planet) {
+      solar_sys[planInt]->specularTexture(handle);
     }
   }
 }
@@ -83,6 +90,7 @@ void Solar_System::update(){
   // }
   Planet* sun;
   for(unsigned int i=0; i<solar_sys.size(); i++){
+
     if(solar_sys[i]->type == SUN){
       sun = solar_sys[i];
       break;
@@ -102,6 +110,7 @@ void Solar_System::update(){
     cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
     cout << endl;
     solar_sys[i]->orbitalVel = orbitalVelDir;
+
     solar_sys[i]->update();
   }
 }

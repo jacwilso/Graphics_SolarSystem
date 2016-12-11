@@ -13,6 +13,7 @@ varying vec3 halfwayVec;
 varying float attenuation;
 
 uniform sampler2D tex;
+uniform sampler2D displace_map;
 
 void main(void) 
 {
@@ -22,7 +23,7 @@ void main(void)
     /*****************************************/
 
     // get the texel corresponding to the interpolated texture coordinates
-    vec4 texel = texture2D( tex, gl_TexCoord[0].st );
+    vec4 texel = texture2D( displace_map, gl_TexCoord[0].st );
 
     /*****************************************/
     /********* Lighting Calculations *********/
