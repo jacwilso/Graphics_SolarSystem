@@ -22,6 +22,12 @@ void Solar_System::setShader(GLuint handle, GLuint timeHandle, PLANET planet) {
   }
 }
 
+void Solar_System::easterEgg() {
+  for(int planInt = SUN; planInt != COMET; planInt++) {
+    solar_sys[planInt]->easterEgg = !solar_sys[planInt]->easterEgg;
+  }
+}
+
 void Solar_System::setTexture(GLuint handle, PLANET planet) {
   for(int planInt = SUN; planInt != COMET; planInt++) {
     if(solar_sys[planInt]->type == planet) {
@@ -69,6 +75,12 @@ void Solar_System::calculate(){
 void Solar_System::startTime(){
   for(unsigned int i=0; i<solar_sys.size(); i++)
     solar_sys[i]->startTime();
+}
+
+void Solar_System::setEggTexture(GLuint handle) {
+  for(int planInt = SUN; planInt != COMET; planInt++) {
+    solar_sys[planInt]->setEggTexture(handle);
+  }
 }
 
 void Solar_System::update(){

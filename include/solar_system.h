@@ -39,6 +39,8 @@ public:
   void setTexture(GLuint, PLANET);
   void newPlanet();
   void specularTexture(GLuint, PLANET);
+  void setEggTexture(GLuint);
+  void easterEgg();
 };
 
 #endif

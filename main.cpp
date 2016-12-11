@@ -82,6 +82,12 @@ GLint GrWindow;
 bool Debug=true;
 
 /******** SHADER ********/
+GLuint planetShader = 0;
+GLuint planetVisibleShader = 0;
+bool visiblePlanets = false;
+
+/******** TEXTURES ********/
+GLuint paone = 0;
 
 /******** PLANET ********/
 Solar_System solar;
@@ -101,6 +107,30 @@ void resizeWindow(int w, int h) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(45.0,aspectRatio,0.1,100000);
+}
+
+void setPlanetShaders() {
+  if(visiblePlanets){
+    solar.setShader(planetVisibleShader, 0, EARTH);
+    solar.setShader(planetVisibleShader, 0, JUPITER);
+    solar.setShader(planetVisibleShader, 0, MARS);
+    solar.setShader(planetVisibleShader, 0, MERCURY);
+    solar.setShader(planetVisibleShader, 0, SATURN);
+    solar.setShader(planetVisibleShader, 0, VENUS);
+    solar.setShader(planetVisibleShader, 0, URANUS);
+    solar.setShader(planetVisibleShader, 0, NEPTUNE);
+  } else {
+    solar.setShader(planetShader, 0, EARTH);
+    solar.setShader(planetShader, 0, JUPITER);
+    solar.setShader(planetShader, 0, MARS);
+    solar.setShader(planetShader, 0, MERCURY);
+    solar.setShader(planetShader, 0, SATURN);
+    solar.setShader(planetShader, 0, VENUS);
+    solar.setShader(planetShader, 0, URANUS);
+    solar.setShader(planetShader, 0, NEPTUNE);
+  }
+
+  visiblePlanets = !visiblePlanets;
 }
 
 // initScene() /////////////////////////////////////////////////////////////////
@@ -297,6 +327,7 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   if( key == 'q' || key == 'Q' || key == 27 )
     exit(0);
   if(key=='`') camera++; 
+  if(camera == solar.solar_sys.size()) camera = 0;
   else if(key=='1') camera=0; // arc ball
   for(int i=0; i<solar.solar_sys.size(); i++){
     if(camera == i){
@@ -304,6 +335,14 @@ void normalKeysDown( unsigned char key, int x, int y ) {
       newLook = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY(), solar.solar_sys[i]->position.getZ()+1 )/EARTH_RADIUS;
       cam.smooth(newPos, newLook);
     }
+  }
+
+  if(key == ' ') {
+    setPlanetShaders();
+  }
+
+  if(key == 'p' || key == 'P') {
+    solar.easterEgg();
   }
 }
 
@@ -435,6 +474,11 @@ void loadTextures() {
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.setTexture(texture, NEPTUNE);
+
+  texture = SOIL_load_OGL_texture("textures/paone.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setEggTexture(texture);
 }
 
 // setupShaders() //////////////////////////////////////////////////////////////////////
@@ -444,16 +488,9 @@ void setupShaders() {
   GLuint uniformTimeLoc = glGetUniformLocation(sunShader, "time");
   solar.setShader(sunShader, uniformTimeLoc, SUN);
 
-  GLuint planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
-  solar.setShader(planetShader, 0, EARTH);
-  solar.setShader(planetShader, 0, JUPITER);
-  solar.setShader(planetShader, 0, MARS);
-  solar.setShader(planetShader, 0, MERCURY);
-  solar.setShader(planetShader, 0, SATURN);
-  solar.setShader(planetShader, 0, VENUS);
-  solar.setShader(planetShader, 0, URANUS);
-  solar.setShader(planetShader, 0, NEPTUNE);
-
+  planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
+  planetVisibleShader =  createShaderProgram("shaders/planetVisible.v.glsl", "shaders/planetVisible.f.glsl");
+  setPlanetShaders();
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////

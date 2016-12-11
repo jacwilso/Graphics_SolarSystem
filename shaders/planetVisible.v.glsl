@@ -12,11 +12,15 @@ varying vec3 lightVec;
 varying vec3 halfwayVec;
 varying float attenuation;
 
+// uniform float time;
+
 void main() {
 
     /*****************************************/
     /********* Vertex Calculations  **********/
     /*****************************************/
+
+    
 
     // first things, first: set gl_Position equal to the vertex in clip space
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

@@ -69,4 +69,21 @@ void main(void)
 
     float at = texel.a;
     float af = theColor.a;
+
+    // compute the modulated resulting color
+    vec4 originalColor = vec4( ct * cf, at * af );
+    float intensity;
+    vec4 color;
+    vec3 n = normalize(normalVec);
+    intensity = dot(vec3(gl_LightSource[0].position), n);
+
+    if (intensity > 0.95)
+        color = vec4(1.0*originalColor.r,1*originalColor.g,1*originalColor.b,1.0);
+    else if (intensity > 0.5)
+        color = vec4(0.6*originalColor.r,0.6*originalColor.g,0.6*originalColor.b,1.0);
+    else if (intensity > 0.25)
+        color = vec4(0.4*originalColor.r,0.4*originalColor.g,0.4*originalColor.b,1.0);
+    else
+        color = vec4(0*originalColor.r,0*originalColor.g,0*originalColor.b,1.0);
+    gl_FragColor = vec4( texel.rgb, at * af);
 }

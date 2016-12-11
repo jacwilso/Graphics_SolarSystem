@@ -34,7 +34,8 @@ public:
   Vector orbitalVel;
   float radius, mass, toSun, axisTilt, rotationVel, orbitVel, theta, lastTime; 
   vector<Planet> satellites;
-  GLuint shaderHandle, textureHandle, shaderTimeLoc, specularHandle;
+  GLuint shaderHandle, textureHandle, shaderTimeLoc, specularHandle, eggHandle;
+  bool easterEgg;
   //static GLUquadric* obj;
   
   Planet(PLANET planet);
@@ -45,6 +46,7 @@ public:
   void registerShader(GLuint handle, GLuint timeHandle) {shaderHandle = handle; shaderTimeLoc = timeHandle;}
   void registerTexture(GLuint handle) {textureHandle = handle;}
   void specularTexture(GLuint handle) {specularHandle = handle;}
+  void setEggTexture(GLuint handle) {eggHandle = handle;}
 };
 
 #endif
