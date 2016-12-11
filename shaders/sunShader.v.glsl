@@ -14,6 +14,7 @@ varying vec3 halfwayVec;
 varying float attenuation;
 varying vec4 shitColor;
 
+uniform sampler2D tex;
 uniform sampler2D displacementMap;
 
 uniform float time;
@@ -34,7 +35,6 @@ void main() {
     gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
     //gl_Vertex = newVertexPos;
 
-    // gl_Vertex = newVertexPos;
     /*****************************************/
     /********* Texture Calculations  *********/
     /*****************************************/
