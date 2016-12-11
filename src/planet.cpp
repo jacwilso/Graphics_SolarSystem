@@ -153,6 +153,7 @@ void Planet::draw(){
     glRotatef(axisTilt, 1.0, 0.0, 0.0);
     
     glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
     glUseProgram(0);
       glBegin(GL_LINES);
         glVertex3f(0, -3*radius/(EARTH_RADIUS*2.0), 0);
@@ -202,7 +203,11 @@ void Planet::draw(){
 
   glUseProgram(0);
 
+  glActiveTexture(GL_TEXTURE0);
+  glDisable(GL_TEXTURE_2D);
+  glActiveTexture(GL_TEXTURE1);
   glDisable( GL_TEXTURE_2D );
+  glActiveTexture(GL_TEXTURE0);
 }
 
 void Planet::update(){
