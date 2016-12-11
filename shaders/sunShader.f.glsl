@@ -13,6 +13,7 @@ varying vec3 halfwayVec;
 varying float attenuation;
 
 uniform sampler2D tex;
+uniform sampler2D displace_map;
 
 void main(void) 
 {

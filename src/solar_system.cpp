@@ -31,6 +31,14 @@ void Solar_System::setTexture(GLuint handle, PLANET planet) {
   }
 }
 
+void Solar_System::specularTexture(GLuint handle, PLANET planet) {
+  for(int planInt = SUN; planInt != COMET; planInt++) {
+    if(solar_sys[planInt]->type == planet) {
+      solar_sys[planInt]->specularTexture(handle);
+    }
+  }
+}
+
 void Solar_System::calculate(){
   xj=0; yj=0; zj=0;
   for(unsigned int i=0; i<solar_sys.size(); i++){
