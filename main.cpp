@@ -329,13 +329,15 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   if(key=='`') camera++; 
   if(camera == solar.solar_sys.size()) camera = 0;
   else if(key=='1') camera=0; // arc ball
-  for(int i=0; i<solar.solar_sys.size(); i++){
-    if(camera == i){
-      newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
-      newLook = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY(), solar.solar_sys[i]->position.getZ()+1 )/EARTH_RADIUS;
-      cam.smooth(newPos, newLook);
+  
+  if (key == '`' || key == '1')
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      if(camera == i){
+        newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
+        newLook = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY(), solar.solar_sys[i]->position.getZ()+1 )/EARTH_RADIUS;
+        cam.smooth(newPos, newLook);
+      }
     }
-  }
 
   if(key == ' ') {
     setPlanetShaders();
