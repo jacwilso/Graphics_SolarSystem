@@ -224,7 +224,6 @@ void renderScene(void)  {
     
 
   // Solar System render here
-  //Pass the time to the shaders
   glPushName(1);
   glPushMatrix();
     glTranslatef( solar.position.getX(), solar.position.getY(), solar.position.getZ() );
@@ -444,6 +443,11 @@ void loadTextures() {
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.setTexture(texture, SUN);
+
+  texture = SOIL_load_OGL_texture("textures/sun_specular.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.specularTexture(texture, SUN);
 
   texture = SOIL_load_OGL_texture("textures/earth.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
   glBindTexture(GL_TEXTURE_2D, texture);
