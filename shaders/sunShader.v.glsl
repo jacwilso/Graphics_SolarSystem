@@ -33,7 +33,7 @@ void main() {
     newVertexPos = (vec4(gl_Normal * distance.xyz * 10.0, 0.0)) + gl_Vertex;
 
     gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
-    gl_Vertex = newVertexPos;
+    //gl_Vertex = newVertexPos;
 
     /*****************************************/
     /********* Texture Calculations  *********/

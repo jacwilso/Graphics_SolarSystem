@@ -4,13 +4,10 @@
 using namespace std;
 
 Solar_System::Solar_System(){
-  glInitNames();
   position = Point(0.0, 0.0, 0.0);
   for(int planInt=SUN; planInt!=COMET; planInt++){
     pick.push_back(false);
-    glPushName(planInt+1);
-      solar_sys.push_back(new Planet(PLANET(planInt)));
-    glPopName();
+    solar_sys.push_back(new Planet(PLANET(planInt)));
   }
 }
 
@@ -40,34 +37,6 @@ void Solar_System::specularTexture(GLuint handle, PLANET planet) {
   for(int planInt = SUN; planInt != COMET; planInt++) {
     if(solar_sys[planInt]->type == planet) {
       solar_sys[planInt]->specularTexture(handle);
-    }
-  }
-}
-
-void Solar_System::calculate(){
-  xj=0; yj=0; zj=0;
-  for(unsigned int i=0; i<solar_sys.size(); i++){
-    xDiff[i]=0; yDiff[i]=0; zDiff[0]=0;
-    if(i==0) continue;
-    float rj = pow( pow(solar_sys[i]->position.getX(), 2) + 
-                    pow(solar_sys[i]->position.getY(), 2) + 
-                    pow(solar_sys[i]->position.getZ(), 2), 
-                    0.5 );
-    xj += solar_sys[i]->mass * solar_sys[i]->position.getX() / pow( rj, 3 );
-    yj += solar_sys[i]->mass * solar_sys[i]->position.getY() / pow( rj, 3 );
-    zj += solar_sys[i]->mass * solar_sys[i]->position.getZ() / pow( rj, 3 );
-  }
-  
-  for(unsigned int i=0; i<solar_sys.size(); i++){
-    for(unsigned int j=0; j<solar_sys.size(); j++){
-      if(i==j) continue;
-      float rj = pow( pow(solar_sys[j]->position.getX() - solar_sys[i]->position.getX(), 2) + 
-                      pow(solar_sys[j]->position.getY() - solar_sys[i]->position.getY(), 2) + 
-                      pow(solar_sys[j]->position.getZ() - solar_sys[i]->position.getZ(), 2), 
-                      0.5 );
-      xDiff[i] += G * solar_sys[j]->mass * (solar_sys[j]->position.getX() - solar_sys[i]->position.getX()) / pow( rj, 3 );
-      yDiff[i] += G * solar_sys[j]->mass * (solar_sys[j]->position.getY() - solar_sys[i]->position.getY()) / pow( rj, 3 );
-      zDiff[i] += G * solar_sys[j]->mass * (solar_sys[j]->position.getZ() - solar_sys[i]->position.getZ()) / pow( rj, 3 );
     }
   }
 }
@@ -113,14 +82,17 @@ void Solar_System::update(){
     if(i==0)continue;
     Vector orbitalVelDir = cross(solar_sys[i]->position - sun->position,Vector(0,1,0));
     orbitalVelDir.normalize();
+    /*
     cout << "Planet " << i << " " << solar_sys[i]->type << endl;
     cout << G << " " << sun->mass << " " << solar_sys[i]->toSun * pow(10, 6)<< endl;
     cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
-
+    */
     float orbitalVelMag = sqrt((G*sun->mass)/(solar_sys[i]->toSun* pow(10, 6)));
     orbitalVelDir *= orbitalVelMag;
+    /*
     cout<<orbitalVelDir.getX()<<" "<<orbitalVelDir.getY()<<" "<<orbitalVelDir.getZ()<<endl;
     cout << endl;
+    */
     solar_sys[i]->orbitalVel = orbitalVelDir;
 
     solar_sys[i]->update();
@@ -131,17 +103,21 @@ void Solar_System::draw(){
   for(unsigned int i=0; i<solar_sys.size(); i++){
     glPushMatrix();
       glTranslatef(solar_sys[i]->position.getX()/EARTH_RADIUS, solar_sys[i]->position.getY()/EARTH_RADIUS, solar_sys[i]->position.getZ()/EARTH_RADIUS); 
-      if(pick[i])
-        glColor3f(1,0,0);
-      else glColor3f(1,1,1);
+      if( pick[i] )
+        glutSolidSphere(solar_sys[i]->radius/EARTH_RADIUS,32,32);
       solar_sys[i]->draw();
     glPopMatrix();
-      //if( solar.pick[i] )
-        //cout<<i<<endl;
+    if( pick[i] )
+      cout<<"PICK "<<i<<endl;
   }
 }
 
 void Solar_System::cleanup(){
   for(unsigned int i=0; i<solar_sys.size(); i++)
     delete solar_sys[i];
+}
+
+void Solar_System::newPlanet(Point position){
+  //solar_sys.push_back(new Planet(position, EARTH_RADIUS/2.0, EARTH_MASS/3.0, ));
+  //solar_sys[solar_sys.size()-1].startTime();
 }
