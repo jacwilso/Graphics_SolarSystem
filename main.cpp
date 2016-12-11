@@ -222,15 +222,23 @@ void renderScene(void)  {
     sky.cubeTexture();
   glPopMatrix();
     
-
+  /* // For names and picking -- not working
+  for(int i=0; i<solar.solar_sys.size(); i++){  
+    glPushMatrix();
+      glColor3f(1,1,1);
+      glTranslatef( solar.solar_sys[i]->position.getX()/EARTH_RADIUS, solar.solar_sys[i]->position.getY()/EARTH_RADIUS, solar.solar_sys[i]->position.getZ()/EARTH_RADIUS );
+      glPushName(i);
+        glutWireSphere(solar.solar_sys[i]->radius/EARTH_RADIUS, 32,32);
+      glPopName();
+    glPopMatrix();
+  }
+  */
   // Solar System render here
   //Pass the time to the shaders
-  glPushName(1);
   glPushMatrix();
     glTranslatef( solar.position.getX(), solar.position.getY(), solar.position.getZ() );
     solar.draw();
   glPopMatrix();
-  glPopName();
 
   for(int i = 0; i < solar.solar_sys.size(); i++) {
     if(solar.solar_sys[i]->type == SUN) {
@@ -239,9 +247,7 @@ void renderScene(void)  {
         glLightfv( GL_LIGHT0, GL_POSITION, sunPos);
     }
   }
-  
   glDisable( GL_TEXTURE_2D );
-  //if solar.pick[i] do something
 
   if(RenderMode == GL_RENDER)
     glutSwapBuffers();
@@ -276,13 +282,10 @@ void mouseCallback(int button, int state, int thisX, int thisY) {
         solar.pick[k]=false;
     bool picked=false;
     for(int i=0, index=0; i<Nhits; i++){
-      //printf("\n");
-      //for(int j=0; j<4; j++)
-        //cout<<PickBuffer[j]<<endl;
       nitems=PickBuffer[index++];
       zmin=PickBuffer[index++];
       zmax=PickBuffer[index++];
-      if(Debug){
+      if(Debug && nitems){
         fprintf(stderr,"Hit # %2d: found %2d items on the name stack\n", i, nitems);
         fprintf(stderr,"\tZmin = 0x%0x, Zmax = 0x%0x\n", zmin, zmax);
       }

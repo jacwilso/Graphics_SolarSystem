@@ -30,7 +30,6 @@ public:
   map<int, double> xDiff, yDiff, zDiff;
   
   Solar_System();
-  void calculate();
   void startTime();
   void update();
   void draw();
