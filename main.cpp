@@ -86,6 +86,9 @@ GLuint planetShader = 0;
 GLuint planetVisibleShader = 0;
 bool visiblePlanets = false;
 
+/******** TEXTURES ********/
+GLuint paone = 0;
+
 /******** PLANET ********/
 Solar_System solar;
 //vector<Planet*> solar_sys;
@@ -340,6 +343,10 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   if(key == ' ') {
     setPlanetShaders();
   }
+
+  if(key == 'p' || key == 'P') {
+    solar.easterEgg();
+  }
 }
 
 void specialKeys(int key, int x, int y){
@@ -475,6 +482,11 @@ void loadTextures() {
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.setTexture(texture, NEPTUNE);
+
+  texture = SOIL_load_OGL_texture("textures/paone.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();
+  solar.setEggTexture(texture);
 }
 
 // setupShaders() //////////////////////////////////////////////////////////////////////
