@@ -120,6 +120,17 @@ void Planet::startTime(){
 }
 
 void Planet::draw(){
+  // specify each of our material component colors
+  GLfloat diffCol[4] = { 1.0, 1.0, 1.0 };         // a nice blue color for diffuse 
+  GLfloat specCol[4] = { 1.0, 1.0, 1.0 };         // yellow specular highlights
+  GLfloat ambCol[4] = { 0, 0, 0 };          // this value can be large because the final value
+                              // of our ambient light will be this * lightAmbient
+  
+  // and now set them for the front and back faces
+  glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, diffCol );
+  glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, specCol );
+  glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, 0.0 );   // as well as the shininess - this value ranges between 0 & 90
+  glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, ambCol );
   glPushMatrix();
     //glTranslatef(position.getX(), position.getY(), position.getZ());
     glRotatef(axisTilt, 1.0, 0.0, 0.0);
