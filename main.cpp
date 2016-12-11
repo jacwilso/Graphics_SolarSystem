@@ -82,6 +82,9 @@ GLint GrWindow;
 bool Debug=true;
 
 /******** SHADER ********/
+GLuint planetShader = 0;
+GLuint planetVisibleShader = 0;
+bool visiblePlanets = false;
 
 /******** PLANET ********/
 Solar_System solar;
@@ -101,6 +104,30 @@ void resizeWindow(int w, int h) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(45.0,aspectRatio,0.1,100000);
+}
+
+void setPlanetShaders() {
+  if(visiblePlanets){
+    solar.setShader(planetVisibleShader, 0, EARTH);
+    solar.setShader(planetVisibleShader, 0, JUPITER);
+    solar.setShader(planetVisibleShader, 0, MARS);
+    solar.setShader(planetVisibleShader, 0, MERCURY);
+    solar.setShader(planetVisibleShader, 0, SATURN);
+    solar.setShader(planetVisibleShader, 0, VENUS);
+    solar.setShader(planetVisibleShader, 0, URANUS);
+    solar.setShader(planetVisibleShader, 0, NEPTUNE);
+  } else {
+    solar.setShader(planetShader, 0, EARTH);
+    solar.setShader(planetShader, 0, JUPITER);
+    solar.setShader(planetShader, 0, MARS);
+    solar.setShader(planetShader, 0, MERCURY);
+    solar.setShader(planetShader, 0, SATURN);
+    solar.setShader(planetShader, 0, VENUS);
+    solar.setShader(planetShader, 0, URANUS);
+    solar.setShader(planetShader, 0, NEPTUNE);
+  }
+
+  visiblePlanets = !visiblePlanets;
 }
 
 // initScene() /////////////////////////////////////////////////////////////////
@@ -309,6 +336,10 @@ void normalKeysDown( unsigned char key, int x, int y ) {
       cam.smooth(newPos, newLook);
     }
   }
+
+  if(key == ' ') {
+    setPlanetShaders();
+  }
 }
 
 void specialKeys(int key, int x, int y){
@@ -453,15 +484,9 @@ void setupShaders() {
   GLuint uniformTimeLoc = glGetUniformLocation(sunShader, "time");
   solar.setShader(sunShader, uniformTimeLoc, SUN);
 
-  GLuint planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
-  solar.setShader(planetShader, 0, EARTH);
-  solar.setShader(planetShader, 0, JUPITER);
-  solar.setShader(planetShader, 0, MARS);
-  solar.setShader(planetShader, 0, MERCURY);
-  solar.setShader(planetShader, 0, SATURN);
-  solar.setShader(planetShader, 0, VENUS);
-  solar.setShader(planetShader, 0, URANUS);
-  solar.setShader(planetShader, 0, NEPTUNE);
+  planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
+  planetVisibleShader =  createShaderProgram("shaders/planetVisible.v.glsl", "shaders/planetVisible.f.glsl");
+  setPlanetShaders();
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////
