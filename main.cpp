@@ -327,10 +327,18 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   if( key == 'q' || key == 'Q' || key == 27 )
     exit(0);
   if(key=='`') camera++; 
-  if(camera == solar.solar_sys.size()) camera = 0;
   else if(key=='1') camera=0; // arc ball
+  else if(key == '2') camera = 1;
+  else if(key == '3') camera = 2;
+  else if(key == '4') camera = 3;
+  else if(key == '5') camera = 4;
+  else if(key == '6') camera = 5;
+  else if(key == '7') camera = 6;
+  else if(key == '8') camera = 7;
+  else if(key == '9') camera = 8;
+  if(camera == solar.solar_sys.size()) camera = 0;
   
-  if (key == '`' || key == '1')
+  if (key == '`' || isdigit(key))
     for(int i=0; i<solar.solar_sys.size(); i++){
       if(camera == i){
         newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
