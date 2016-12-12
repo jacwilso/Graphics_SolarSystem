@@ -31,6 +31,7 @@ void main() {
     distance = texture2D( displacementMap, gl_MultiTexCoord0.xy );
 
     newVertexPos = (vec4(gl_Normal * distance.xyz * 10.0, 0.0)) + gl_Vertex;
+    newVertexPos = newVertexPos / 10;
 
     gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
     //gl_Vertex = newVertexPos;

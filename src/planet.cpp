@@ -112,12 +112,18 @@ Planet::Planet(PLANET planet){
       toSun = 0;
       axisTilt = 0;
       rotationVel = 0;
+      orbitVel = 0;
       satellites.clear();
       break;
   }
   radius *= EARTH_RADIUS;
   mass *= EARTH_MASS;
   position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
+  planetLine = PlanetLine(position, lineLife +(100 * (50.0-orbitVel)/orbitVel), radius/EARTH_RADIUS/2.0, lineSpawn * (orbitVel/50.0));
+  fireball = Fireball(position, fireLife, radius/EARTH_RADIUS, fireSpawn);
+  lineOn = false;
+  onFire = false;
+
   shaderHandle = 0;
   textureHandle = 0;
   specularHandle = 0;
@@ -145,12 +151,18 @@ Planet::Planet(Point position, float radius, float mass, float axisTilt, float r
 }
 
 void Planet::startTime(){
-lastTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+  lastTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
   for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].lastTime = lastTime;
 }
 
 void Planet::draw(){
+
+  //Update our planet line to follow the planet
+  planetLine.draw(0);
+  fireball.draw(1);
+  
+
   // specify each of our material component colors
   GLfloat diffCol[4] = { 1.0, 1.0, 1.0 };
   GLfloat specCol[4] = { 0.2, 0.2, 0.2 };
@@ -230,16 +242,40 @@ void Planet::draw(){
 
 void Planet::update(){
   float currTime = glutGet(GLUT_ELAPSED_TIME)/1000.0;
-  float timeDiff = currTime - lastTime;
+  float timeDiff = (currTime - lastTime);
  
   lastTime = currTime;
 
   rotation += rotationVel / (2*M_PI*radius) * (180.0 / M_PI ) * timeDiff * 60;
-  
+  Point lastPosition = position;
   if(this->type != SUN){
-    //cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
+    // cout<<orbitalVel.getX()<<" "<<orbitalVel.getY()<<" "<<orbitalVel.getZ()<<endl;
     position = Point( position.getX() + timeDiff*orbitalVel.getX(), position.getY() + timeDiff*orbitalVel.getY(), position.getZ() + timeDiff*orbitalVel.getZ() ); 
+    // cout<<position.getX()<<" "<<position.getY()<<" "<<position.getZ()<<endl << endl;
   }
   for(unsigned int i=0; i<satellites.size(); i++)
     satellites[i].update();
+
+  planetLine.updatePosition(position/EARTH_RADIUS, lastPosition/EARTH_RADIUS);
+  fireball.updatePosition(position/EARTH_RADIUS, lastPosition/EARTH_RADIUS);
+  if(lineOn){
+    planetLine.update();
+  }else{
+    planetLine.clearParticles();
+  }
+
+  if(onFire){
+    fireball.update();
+    radius = radius* 0.995;
+    if(radius < 1.0) {
+      radius = 0;
+      onFire = false;
+    }
+  }else{
+    fireball.clearParticles();
+  }
+  
+    
+  
+  
 }

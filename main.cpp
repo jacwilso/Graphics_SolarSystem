@@ -86,6 +86,8 @@ GLuint planetShader = 0;
 GLuint planetVisibleShader = 0;
 bool visiblePlanets = false;
 
+GLuint particleShader = 0;
+
 /******** TEXTURES ********/
 GLuint paone = 0;
 // GLuint deathStarTexture = 0;
@@ -146,11 +148,11 @@ void drawShip() {
 
     // glEnable(GL_TEXTURE_2D);
     // glBindTexture(GL_TEXTURE_2D, paone);
-    GLUquadricObj *mySphere = gluNewQuadric();
+    //GLUquadricObj *mySphere = gluNewQuadric();
     glScalef(0.01, 0.01, 0.01);
     
     glDisable(GL_LIGHTING);
-    gluSphere(mySphere, 1, 32, 32);
+    //gluSphere(mySphere, 1, 32, 32);
     glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
 
@@ -394,6 +396,35 @@ void normalKeysDown( unsigned char key, int x, int y ) {
     setPlanetShaders();
   }
 
+  // Turn on the planet line for the planet you're focused on
+  if(key == 'l'){
+    solar.solar_sys[camera]->lineOn = !solar.solar_sys[camera]->lineOn;
+  }
+
+  //Turn on all planet lines
+  if(key == 'n'){
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      solar.solar_sys[i]->lineOn = true;
+    }
+  }
+
+  //Turn off al planet lines
+  if(key == 'm'){
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      solar.solar_sys[i]->lineOn = false;
+    }
+  }
+
+  if(key == 'f'){
+    solar.solar_sys[camera]->onFire = true;
+  }
+
+  if(key == 'd'){
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      solar.solar_sys[i]->onFire = true;
+    }
+  }
+
   if(key == 'p' || key == 'P') {
     solar.easterEgg();
   }
@@ -553,6 +584,9 @@ void setupShaders() {
   planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
   planetVisibleShader =  createShaderProgram("shaders/planetVisible.v.glsl", "shaders/planetVisible.f.glsl");
   setPlanetShaders();
+
+  particleShader = createShaderProgram("shaders/particle.v.glsl","shaders/particle.f.glsl");
+  solar.setParticleShader(particleShader);
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////
