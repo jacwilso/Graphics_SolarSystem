@@ -3,67 +3,63 @@ CSCI441, Computer Graphics, Fall 2016
 Guild Name: Galactic Homeboiz
 
 Guild Members
+Jacob Wilson (jacwilso@mines.edu) / Shuhei Son of Atlas
 William Kelly (wikelly@mines.edu) / Mr. Wiggles
 Alan Champion (achampio@mines.edu) / Tegel Slimthot (Submitted source code)
 
-Midterm Project (MP)
+Final Project (FP)
 
-Description: A program that displays the two hero's in the guild. One is controllable and the other two are racing in a path. 
-    The hero's move along a Bezier patch and they remain standing normal to the surface. There are multiple cameras (free cam, overhead cam, and arc cam for every hero).
-    There are menus (and sub-menus) to select cameras and display the curves of the familiars. 
+Description: A program that shows the whole universe!! ...or at least our solar system. We have the planets (which means no Pluto) rotating around the sun. 
 
+We allow the user to move between the planets and to interact in some fun easter eggs. 
+The solar system is hierarchical - the system draws the planets who draw particles (if you can find out how to make them do so...). 
+There are multiple texture application (every planet + sky box)
+The sun is a light and the camera is a light (Go close to the backside of a planet to see it). There are also materials for the planets and sun. 
+There are quite a bunch of shaders. We have a vertex shader that is texture mapping the sun to make it bumpy. The planets have shaders for lighting and using multiple lights. The particles have a shader that makes them shrink as they live. 
+We have sound, it just doesn't work on the school computers. 
 
-Usage:  run gmake, then run the guildWars executable like so:
-        ./guildWars [csv file]
-
-        For my control points, simply run 
-        ./guildWars trainingGrounds.csv
-        ./guildWars mountainRegion.csv
-
-        The way to create a world file is below.
+Usage:  run gmake, then run the executable like so:
+        ./sys
 
     Keys:
-        Movement: (in hero orientation)
-            w: go forward 
-            s: go backwards
-            d: turn right
-            a: turn left
-        Movement: (in free cam)
-            w: go forward 
-            s: go backwards
+        Camera: 
+            Number key 1: Arc around sun
+            2: Arc around Mercury
+            3: Arc around Venus
+            4: Arc around Earth
+            5: Arc around Mars
+            6: Arc around Jupiter
+            7: Arc around Saturn
+            8: Arc around Uranus
+            9: Arc around Neptune
+            '`': Switch between planets in order
 
-        Camera Movement: (in hero orientation)
-            left click + drag: change perspective (rotate around the hero)
-            ctrl + left click + drag: change zoom on hero
-        Camera Movement: (in free cam)
-            left click + drag: change what you are looking at
+        Lighting
+            Space: Turns off l
 
-        Picture-In-Picture controls
-            1: First-person view
-            2: Sky cam view (top-down)
-            0: disable picture-in-picture
+        Planets
+            l: Toggle trail for planet that is current focus
+            n: Turns on trail for all planets
+            m: Turns off trail for all planets
+            f: Set current planet on fire
+            d: Set all planets on fire
+            p: Turn on easter egg
 
-Known bugs: Occasionally the wandering hero will spaz out a little bit
-    The path for the heros on the track does not tilt to make ramps very well
-    The fps display refuses to show up
+    Mouse: 
+        Left click and drag: Arc ball around current focus
+        Ctrl, left click and drag: Zoom in/out
 
-Format for World File CSV
-    [Bezier Surface Count (only works with one currently)]
-    [The 16 points for the surface, each point on new line and formatted as "x, y, z"]
-    [Bezier Curve Point Count]
-    [The points for the curve, each point on new line and formatted as "x, y, z"]
-    [Environmental Pieces Count (i.e. how many trees and buildings)]
-    [[Type of environmental piece (tree or building)]
-    [x and z position formated in "x, z". The y will be determined from the bezier surface]
-    [Rotation in the x, y, and z formated as "x, y, z"]
-    [Scaling factor]]
+Known bugs: Sometimes if you zoom to quickly, it will go all black but can be fixed by wiggling camera. 
+    Shaders do not compile on some personal equipment. 
+    Sound does not work on the school computers. 
 
 Distribution of Work:
-    Will %55(time: %50): Bezier Patch, Bezier Curve, arc length parameterization, terrain adjustment, camera
-    Alan %45(time: %50): Hero drawing, Bezier Curve drawing, Environment drawing, Terrain coloring, camera
+    Will 33.3%: Planets orbiting, trails and particles, lighting shaders, camera tracking. 
+    Alan 33.3%: Planet and sun shaders (bump map and some lighting), texturing, lighting, p easter egg.
+    Jacob 33.3%: Setup base classes (hierarchical model), Camera smooth transition, skybox, planet rotation, sound.
 
-Time: ~40 hours
+Time: ~30 hours
 
-Lab Help: 7 - The labs were alright. The only thing that we felt bad about were the bezier surface and the text
+Labs: 8 - The labs were helpful enough. Especially with lighting and texturing. 
 
-Fun: 6 - Hard to have fun when panicking
+Fun: 9 - This was really fun. The requirements were not hard enough to get in the way of enjoyment. 
