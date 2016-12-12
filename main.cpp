@@ -148,11 +148,11 @@ void drawShip() {
 
     // glEnable(GL_TEXTURE_2D);
     // glBindTexture(GL_TEXTURE_2D, paone);
-    GLUquadricObj *mySphere = gluNewQuadric();
+    //GLUquadricObj *mySphere = gluNewQuadric();
     glScalef(0.01, 0.01, 0.01);
     
     glDisable(GL_LIGHTING);
-    gluSphere(mySphere, 1, 32, 32);
+    //gluSphere(mySphere, 1, 32, 32);
     glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
 
