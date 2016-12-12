@@ -565,9 +565,9 @@ void loadTextures() {
   solar.setTexture(texture, NEPTUNE);
 
   paone = SOIL_load_OGL_texture("textures/paone.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
-  glBindTexture(GL_TEXTURE_2D, texture);
+  glBindTexture(GL_TEXTURE_2D, paone);
   registerTexture();
-  solar.setEggTexture(texture);
+  solar.setEggTexture(paone);
 
   /*deathStarTexture = SOIL_load_OGL_texture("textures/deathStar.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
   glBindTexture(GL_TEXTURE_2D, texture);

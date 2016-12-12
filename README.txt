@@ -19,7 +19,7 @@ There are quite a bunch of shaders. We have a vertex shader that is texture mapp
 We have sound, it just doesn't work on the school computers. 
 
 Usage:  run gmake, then run the executable like so:
-        ./sys
+        ./keyToTheKingdom
 
     Keys:
         Camera: 
