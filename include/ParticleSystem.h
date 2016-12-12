@@ -1,3 +1,4 @@
+#pragma once
 #include <GL/glew.h>       // OpenGL Extension Wrangler
 
 #include "Particle.h"

@@ -119,8 +119,10 @@ Planet::Planet(PLANET planet){
   radius *= EARTH_RADIUS;
   mass *= EARTH_MASS;
   position = Point(type==SUN ? 0: (toSun+radius+SUN_RADIUS*EARTH_RADIUS), 0.0, 0.0);
-  planetLine = PlanetLine(position, lineLife +(100 * (50.0-orbitVel)/orbitVel) , lineSpawn * (orbitVel/50.0));
+  planetLine = PlanetLine(position, lineLife +(100 * (50.0-orbitVel)/orbitVel), radius/EARTH_RADIUS/2.0, lineSpawn * (orbitVel/50.0));
+  fireball = Fireball(position, fireLife, radius/EARTH_RADIUS, fireSpawn);
   lineOn = false;
+  onFire = false;
 
   shaderHandle = 0;
   textureHandle = 0;
@@ -157,8 +159,8 @@ void Planet::startTime(){
 void Planet::draw(){
 
   //Update our planet line to follow the planet
-  
   planetLine.draw(0);
+  fireball.draw(1);
   
 
   // specify each of our material component colors
@@ -255,10 +257,25 @@ void Planet::update(){
     satellites[i].update();
 
   planetLine.updatePosition(position/EARTH_RADIUS, lastPosition/EARTH_RADIUS);
+  fireball.updatePosition(position/EARTH_RADIUS, lastPosition/EARTH_RADIUS);
   if(lineOn){
     planetLine.update();
   }else{
     planetLine.clearParticles();
   }
+
+  if(onFire){
+    fireball.update();
+    radius = radius* 0.995;
+    if(radius < 1.0) {
+      radius = 0;
+      onFire = false;
+    }
+  }else{
+    fireball.clearParticles();
+  }
+  
+    
+  
   
 }

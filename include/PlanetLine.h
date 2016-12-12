@@ -2,8 +2,8 @@
 
 class PlanetLine : public ParticleSystem{
 public:
-	//(Emitter X, Y, Z), Lifespan, Spawn Rate
-	PlanetLine(Point,	 double, 	 int);
+	//(Emitter X, Y, Z), Lifespan, line radius, Spawn Rate
+	PlanetLine(Point,	 double, 	double, 	 int);
 	PlanetLine(){}
 
 	//Implementations
@@ -16,8 +16,10 @@ public:
 
 	void updatePosition(Point,Point);
 
+
 private:
 
 	//Fountain parameters
 	double lifespan;
+	double lineRadius;
 };

@@ -32,8 +32,11 @@ void ParticleSystem::update(){
 	//Spawn new particles at the specified rate
 	spawnCounter += spawnRate;
 	if(spawnCounter >= 1.0){
-		spawnParticle();
-		spawnCounter = spawnCounter - 1.0;
+		int numNew =(int)spawnCounter;
+		for(int i = 0; i < numNew; i++){
+			spawnParticle();
+		}
+		spawnCounter = spawnCounter - numNew;
 	}
 
 	// Update the particles, and check if they bounce/die off
@@ -93,7 +96,13 @@ void ParticleSystem::draw(int particleType){
 
 		// Enable texturing
 		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_LIGHTING);
 
+		if(particleType == 0){
+			glColor3f(1.0,1.0,1.0);
+		}else{
+			glColor3f(1.0,0.0,0.0);
+		}
         //Set our texture
 		for (unsigned int i = 0; i < particles.size(); i++){
 
@@ -104,7 +113,8 @@ void ParticleSystem::draw(int particleType){
 			// Draw the particle
 			particles[i]->draw();
 		}
-
+		glColor3f(1.0,1.0,1.0);
+		glEnable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }

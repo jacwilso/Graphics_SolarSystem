@@ -1,4 +1,4 @@
-
+#pragma once
 #ifdef __APPLE__			// if compiling on Mac OS
 	#include <GLUT/glut.h>
 	#include <OpenGL/gl.h>
@@ -22,7 +22,7 @@ public:
 
 	void draw();
 
-
+	double radius;
 	//Getters and Setters
 	Vector getVelocity(){return velocity;}
 	Point getLocation(){return location;}

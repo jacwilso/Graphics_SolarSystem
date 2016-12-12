@@ -18,6 +18,7 @@
 #include "Point.h"
 #include "Vector.h"
 #include "PlanetLine.h"
+#include "Fireball.h"
 using namespace std;
 
 enum PLANET{SUN,MERCURY,VENUS,EARTH,MARS,JUPITER,SATURN,URANUS,NEPTUNE,COMET};
@@ -28,6 +29,8 @@ const float SUN_RADIUS = 109; // Earth radii
 
 const int lineLife = 20;
 const float lineSpawn = 10;
+const float fireLife = 0.3;
+const float fireSpawn = 1000;
 class Planet{
 private:
   float rotation;
@@ -43,6 +46,9 @@ public:
   //static GLUquadric* obj;
   PlanetLine planetLine;
   bool lineOn;
+
+  Fireball fireball;
+  bool onFire;
   
   Planet(PLANET planet);
   Planet(Point position, float radius, float mass, float axisTilt, float rotationVel, Vector orbitalVel);

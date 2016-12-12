@@ -357,19 +357,32 @@ void normalKeysDown( unsigned char key, int x, int y ) {
     setPlanetShaders();
   }
 
+  // Turn on the planet line for the planet you're focused on
   if(key == 'l'){
     solar.solar_sys[camera]->lineOn = !solar.solar_sys[camera]->lineOn;
   }
 
+  //Turn on all planet lines
   if(key == 'n'){
     for(int i=0; i<solar.solar_sys.size(); i++){
       solar.solar_sys[i]->lineOn = true;
     }
   }
 
+  //Turn off al planet lines
   if(key == 'm'){
     for(int i=0; i<solar.solar_sys.size(); i++){
       solar.solar_sys[i]->lineOn = false;
+    }
+  }
+
+  if(key == 'f'){
+    solar.solar_sys[camera]->onFire = true;
+  }
+
+  if(key == 'd'){
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      solar.solar_sys[i]->onFire = true;
     }
   }
 

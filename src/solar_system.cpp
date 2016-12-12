@@ -25,6 +25,7 @@ void Solar_System::setShader(GLuint handle, GLuint timeHandle, PLANET planet) {
 void Solar_System::setParticleShader(GLuint handle){
   for(int planInt = SUN+1; planInt != COMET; planInt++) {
     solar_sys[planInt]->planetLine.setShader(handle);
+    solar_sys[planInt]->fireball.setShader(handle);
   }
 }
 

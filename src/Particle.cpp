@@ -15,11 +15,11 @@ Particle::Particle(Point p, Vector v){
 }
 
 void Particle::draw(){
-    glDisable(GL_LIGHTING);
+    //if(age < 0.5) return;
+    
     glPushMatrix();
-        glColor3f(1.0,1.0,1.0);
         glTranslatef(location.getX(), location.getY(), location.getZ());
-    	glutSolidCube(1);
+    	glutSolidSphere(radius, 10,10);
     glPopMatrix();
-    glEnable(GL_LIGHTING);
+    
 }
