@@ -86,6 +86,8 @@ GLuint planetShader = 0;
 GLuint planetVisibleShader = 0;
 bool visiblePlanets = false;
 
+GLuint particleShader = 0;
+
 /******** TEXTURES ********/
 GLuint paone = 0;
 
@@ -355,6 +357,22 @@ void normalKeysDown( unsigned char key, int x, int y ) {
     setPlanetShaders();
   }
 
+  if(key == 'l'){
+    solar.solar_sys[camera]->lineOn = !solar.solar_sys[camera]->lineOn;
+  }
+
+  if(key == 'n'){
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      solar.solar_sys[i]->lineOn = true;
+    }
+  }
+
+  if(key == 'm'){
+    for(int i=0; i<solar.solar_sys.size(); i++){
+      solar.solar_sys[i]->lineOn = false;
+    }
+  }
+
   if(key == 'p' || key == 'P') {
     solar.easterEgg();
   }
@@ -510,6 +528,9 @@ void setupShaders() {
   planetShader = createShaderProgram("shaders/planet.v.glsl", "shaders/planet.f.glsl");
   planetVisibleShader =  createShaderProgram("shaders/planetVisible.v.glsl", "shaders/planetVisible.f.glsl");
   setPlanetShaders();
+
+  particleShader = createShaderProgram("shaders/particle.v.glsl","shaders/particle.f.glsl");
+  solar.setParticleShader(particleShader);
 }
 
 // cleanup() //////////////////////////////////////////////////////////////////////

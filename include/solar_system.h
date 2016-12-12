@@ -30,13 +30,15 @@ public:
   map<int, double> xDiff, yDiff, zDiff;
   
   Solar_System();
+  void calculate();
   void startTime();
   void update();
   void draw();
   void cleanup();
   void setShader(GLuint, GLuint, PLANET);
+  void setParticleShader(GLuint);
   void setTexture(GLuint, PLANET);
-  void newPlanet(Point position);
+  void newPlanet();
   void specularTexture(GLuint, PLANET);
   void setEggTexture(GLuint);
   void easterEgg();
