@@ -1,3 +1,5 @@
+#ifndef PLANETLINE_H
+#define PLANETLINE_H
 #include "ParticleSystem.h"
 
 class PlanetLine : public ParticleSystem{
@@ -23,3 +25,5 @@ private:
 	double lifespan;
 	double lineRadius;
 };
+
+#endif

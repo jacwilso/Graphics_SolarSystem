@@ -1,44 +1,35 @@
 #include "sound.h"
-using namespace std;
 
-Sound::Sound( int wavSrcs ){
-  this->wavSrcs = wavSrcs;
-  #define NUM_BUFFERS wavSrcs
-  #define NUM_SOURCES wavSrcs
-  buffers = new ALuint[wavSrcs];
-  sources = new ALuint[wavSrcs];
-}
-
-void Sound::initializeOpenAL( int srcs, string sourceFile[], Point position[] ) {
+// intializing the sound -- copied from lab04
+void Sound::initializeOpenAL( int argc, char *argv[] ) {
     ALsizei size, freq;
     ALenum 	format;
     ALvoid 	*data;
     ALboolean loop;
     
-    //alutInit(&argc,argv);
+    alutInit(&argc,argv);
 
-    device=alcOpenDevice( NULL );
-    context=alcCreateContext( device, NULL );
-    alcMakeContextCurrent( context );
-    alGenBuffers( NUM_BUFFERS, buffers );
-    alGenSources( NUM_SOURCES, sources );
-    
-    for(int i=0; i<srcs; i++){
-      #ifdef __APPLE__
-        alutLoadWAVFile( (ALbyte*)sourceFile[i].c_str(), &format, &data, &size, &freq );
-      #else
-        alutLoadWAVFile( (ALbyte*)sourceFile[i].c_str(), &format, &data, &size, &freq, &loop );
-      #endif
-      alBufferData( buffers[i], format, data, size, freq );
-      alutUnloadWAV( format, data, size, freq );
-      alSourcei( sources[i], AL_BUFFER, buffers[i] );
-      alSourcei( sources[i], AL_LOOPING, AL_TRUE );
-      positionSource( sources[i], position[i] );
-    }
+    device=alcOpenDevice(NULL);
+    context=alcCreateContext(device,NULL);
+    alcMakeContextCurrent(context);
+    alGenBuffers(NUM_BUFFERS,buffers);
+    alGenSources(NUM_SOURCES,sources);
 
-    PrintOpenALInfo();
+// WAV #1 -- NEED TO CHANGE ON PROGRAM BASIS
+    #ifdef __APPLE__
+      alutLoadWAVFile((ALbyte*)"rocket.wav",&format,&data,&size,&freq);
+    #else
+      alutLoadWAVFile((ALbyte*)"rocket.wav",&format,&data,&size,&freq,&loop);
+    #endif
+      alBufferData(buffers[0],format,data,size,freq);
+    alutUnloadWAV(format,data,size,freq);
+    alSourcei(sources[0],AL_BUFFER,buffers[0]);
+    alSourcei(sources[0],AL_LOOPING,AL_TRUE);
+
+    PrintOpenALInfo();					// print our OpenAL versioning information
 }
 
+// print the openAl information -- copied from lab04
 void Sound::PrintOpenALInfo() {
     fprintf( stdout, "[INFO]: /--------------------------------------------------------\\\n");
     fprintf( stdout, "[INFO]: | OpenAL Information                                     |\n");
@@ -49,21 +40,22 @@ void Sound::PrintOpenALInfo() {
     fprintf( stdout, "[INFO]: \\--------------------------------------------------------/\n\n");
 }
 
+// clean up the openAl things
 void Sound::cleanupOpenAL() {
-  alutExit();
-  alDeleteBuffers(wavSrcs,buffers);
-  alDeleteSources(wavSrcs,sources);
-  delete buffers;
-  delete sources;
+    alutExit();
+    alDeleteBuffers(NUM_BUFFERS,buffers);
+    alDeleteSources(NUM_SOURCES,sources);
 }
 
-void Sound::positionListener( Point position, Point direction, Point upVec){
-    float listenerPosition[3] = { position.getX(), position.getY(), position.getZ() };
-    float listenerOrientation[6]={ direction.getX(), direction.getY(), direction.getZ(), upVec.getX(), upVec.getY(), upVec.getZ() };
-    alListenerfv( AL_POSITION, listenerPosition );
-    alListenerfv( AL_ORIENTATION, listenerOrientation );
+// position listener -- copied from lab04
+void Sound::positionListener(float posX,float posY,float posZ,float dirX,float dirY,float dirZ,float upX,float upY,float upZ){
+    float listenerPosition[3]={posX,posY,posZ};
+    float listenerOrientation[6]={dirX,dirY,dirZ,upX,upY,upZ};
+    alListenerfv(AL_POSITION,listenerPosition);
+    alListenerfv(AL_ORIENTATION,listenerOrientation);
 }
-void Sound::positionSource( ALuint src, Point position ){
-    float srcPosition[3] = { position.getX(), position.getY(), position.getZ() };
-    alSourcefv( src, AL_POSITION, srcPosition );
+ // position the source -- copied from lab04
+void Sound::positionSource(ALuint src,float posX,float posY,float posZ){
+    float srcPosition[3]={posX,posY,posZ};
+    alSourcefv(src,AL_POSITION,srcPosition);
 }

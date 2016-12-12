@@ -60,9 +60,9 @@ Camera cam;
 Point newPos, newLook;
 
 /******** SOUND ********/
-int wavSrcs = 0;
 /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
-// Sound wav( wavSrcs ); // # srcs
+int wavSrcs = 1;
+Sound wav;
 bool soundOff=true;
 
 /******** SKYBOX ********/
@@ -218,10 +218,7 @@ void initScene()  {
 
   //Sound
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
-  //wav.positionListener(person pos, cam direction,0,1,0);
-  /*for(int i=0; i<wavSrcs; i++) // move to render if dynamic
-    wav.positionSource(wav.sources[i], sound pos);*/
-
+  wav.positionSource(wav.sources[0], 0,0,0);
 }
 
 // renderScene() ///////////////////////////////////////////////////////////////
@@ -254,8 +251,8 @@ void renderScene(void)  {
   // glPushMatrix();
 
     //drawGrid();
-    
-    
+  wav.positionListener(cam.camPos.getX(), cam.camPos.getY(), cam.camPos.getZ(), cam.camDir.getX(), cam.camDir.getY(), cam.camDir.getZ(), 0,1,0);  
+
   glPushMatrix();
     glScalef(1500,1500,1500);
     sky.cubeTexture();
@@ -279,7 +276,7 @@ void renderScene(void)  {
     solar.draw();
   glPopMatrix();
 
-  for(int i = 0; i < solar.solar_sys.size(); i++) {
+  for(unsigned int i = 0; i < solar.solar_sys.size(); i++) {
     if(solar.solar_sys[i]->type == SUN) {
         Point pos = solar.solar_sys[i]->position;
         float sunPos[4] = {pos.getX(), pos.getY(), pos.getZ(), 1.0};
@@ -384,7 +381,7 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   if(camera == solar.solar_sys.size()) camera = 0;
   
   if (key == '`' || isdigit(key))
-    for(int i=0; i<solar.solar_sys.size(); i++){
+    for(unsigned int i=0; i<solar.solar_sys.size(); i++){
       if(camera == i){
         newPos = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY() + 3.5*solar.solar_sys[i]->radius, solar.solar_sys[i]->position.getZ() )/EARTH_RADIUS;
         newLook = Point( solar.solar_sys[i]->position.getX(), solar.solar_sys[i]->position.getY(), solar.solar_sys[i]->position.getZ()+1 )/EARTH_RADIUS;
@@ -403,14 +400,14 @@ void normalKeysDown( unsigned char key, int x, int y ) {
 
   //Turn on all planet lines
   if(key == 'n'){
-    for(int i=0; i<solar.solar_sys.size(); i++){
+    for(unsigned int i=0; i<solar.solar_sys.size(); i++){
       solar.solar_sys[i]->lineOn = true;
     }
   }
 
   //Turn off al planet lines
   if(key == 'm'){
-    for(int i=0; i<solar.solar_sys.size(); i++){
+    for(unsigned int i=0; i<solar.solar_sys.size(); i++){
       solar.solar_sys[i]->lineOn = false;
     }
   }
@@ -420,7 +417,7 @@ void normalKeysDown( unsigned char key, int x, int y ) {
   }
 
   if(key == 'd'){
-    for(int i=0; i<solar.solar_sys.size(); i++){
+    for(unsigned int i=0; i<solar.solar_sys.size(); i++){
       solar.solar_sys[i]->onFire = true;
     }
   }
@@ -446,11 +443,6 @@ void myTimer( int value ) {
   cam.update(Point(solar.solar_sys[camera]->position.getX(), solar.solar_sys[camera]->position.getY(), solar.solar_sys[camera]->position.getZ())/EARTH_RADIUS);
 
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
-  /*ALenum sourceState;
-  for(int i=0; i<wavSrcs; i++){
-    alGetSourcei( wav.sources[i], AL_SOURCE_STATE, &sourceState );
-    if(soundOff) alSourcePause( wav.sources[i] );
-  }*/
 
   glutPostRedisplay();
   glutTimerFunc( 1000.0f / 60.0f, myTimer, 0 );
@@ -461,8 +453,18 @@ void myMenu( int value ) {
   switch(value){
     case 0: exit(0); break;
     case 1: soundOff = !soundOff;
-      if(soundOff) glutChangeToMenuEntry(1,"Turn ON Sound",1);
-      else glutChangeToMenuEntry(1,"Turn OFF Sound",1);
+      ALenum sourceState[wavSrcs];
+      for(int i=0; i<wavSrcs; i++)
+        alGetSourcei( wav.sources[i], AL_SOURCE_STATE, &sourceState[i] );
+      if(soundOff){
+        for(int i=0; i<wavSrcs; i++)
+           if(sourceState[i] == AL_PLAYING) alSourceStop( wav.sources[i] );
+      }
+      else{
+        for(int i=0; i<wavSrcs; i++)
+          if(sourceState[i] != AL_PLAYING) alSourcePlay( wav.sources[i] );
+      }
+    break;
   }
 }
 
@@ -470,7 +472,7 @@ void myMenu( int value ) {
 void createMenus() {
   glutCreateMenu(myMenu);
   glutAddMenuEntry("Quit",0);
-  glutAddMenuEntry("Turn ON Sound",1);
+  glutAddMenuEntry("Toggle Sound",1);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -592,7 +594,7 @@ void setupShaders() {
 // cleanup() //////////////////////////////////////////////////////////////////////
 void cleanup(){
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
-  // wav.cleanupOpenAL();
+  wav.cleanupOpenAL();
   solar.cleanup();
 }
 
@@ -607,6 +609,7 @@ int main( int argc, char **argv ) {
   glutInitWindowSize( windowWidth, windowHeight );
   GrWindow = glutCreateWindow( "Solar System" );
   glSelectBuffer(PICK_BUFFER_SIZE,PickBuffer);
+  wav.initializeOpenAL(argc,argv);
 
   GLenum glewResult = glewInit();
   if( glewResult != GLEW_OK ) {
@@ -653,7 +656,6 @@ int main( int argc, char **argv ) {
   printf( "[INFO]: Texture creation complete.\n" );
 
   /////////////////////////////////// UNCOMMENT FOR SOUND ///////////////////////////////////
-  //wav.initializeOpenAL(argc,argv);
 
   createMenus();
 

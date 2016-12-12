@@ -2,9 +2,9 @@
 #define SOUND_H
 
 #ifdef __APPLE__			// if compiling on Mac OS
-    #include <ALUT/alut.h>  // OpenAL Headers
-    #include <OpenAL/al.h>
-    #include <OpenAL/alc.h>
+    #include <AL/alut.h>  // OpenAL Headers
+    #include <AL/al.h>
+    #include <AL/alc.h>
 #else                       // else compiling on Linux OS
     #include <AL/alut.h>    // OpenAL Headers
     #include <AL/al.h>
@@ -12,30 +12,27 @@
 #endif
 
 #include <stdio.h>
-#include <string>
-using namespace std;
-
-#include "Point.h"
 
 class Sound{
-  private:
-    int wavSrcs;
+private:
+    #define NUM_BUFFERS 2 // number of buffers
+    #define NUM_SOURCES 2 // number of sources
 
+    // lab04
     ALCdevice *device; 
     ALCcontext *context;
-    ALuint *buffers;
+    ALuint buffers[ NUM_BUFFERS ];
     
-    void PrintOpenALInfo();
-  public:
-    ALuint *sources;
+    void PrintOpenALInfo(); // print the information
+public:
+
+    ALuint sources[ NUM_SOURCES ]; // wavs in source array
     
-    Sound( int wavSrcs );
-    void initializeOpenAL( int srcs, string sourceFile[], Point position[] );
-    //void initializeOpenAL( int argc, char *argv[] ); 
-    void cleanupOpenAL();
+    void initializeOpenAL( int argc, char *argv[] ); // initializer of the sound -- called in main
+    void cleanupOpenAL(); // clean the sound up
     
-    void positionListener( Point position, Point direction, Point upVec);
-    void positionSource( ALuint src, Point position ); 
+    void positionListener(float posX,float posY,float posZ,float dirX,float dirY,float dirZ,float upX=0,float upY=1,float upZ=0); // position the listener with proper variables
+    void positionSource( ALuint src, float posX, float posY, float posZ ); // postion the source with proper variables
 };
 
 #endif

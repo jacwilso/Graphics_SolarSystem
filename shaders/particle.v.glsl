@@ -22,12 +22,13 @@ void main() {
     /********* Vertex Calculations  **********/
     /*****************************************/
 
+    vec4 vertex;
     // Vary the size of the particle based on its age
     // >> older = smaller
-    gl_Vertex += (age/lifespan);
+    vertex = gl_Vertex + (age/lifespan);
 
     // first things, first: set gl_Position equal to the vertex in clip space
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_Position = gl_ModelViewProjectionMatrix * vertex;
 
     theColor = gl_Color;
 }
