@@ -45,7 +45,7 @@ void main() {
 
     // compute the distance from the point to the light and compute attenuation
     float dist = length( lightVec[0] );
-    attenuation[0] = 1.0 / (gl_LightSource[0].constantAttenuation + gl_LightSource[1].linearAttenuation * dist + gl_LightSource[1].quadraticAttenuation * dist * dist);
+    attenuation[0] = 1.0 / (gl_LightSource[0].constantAttenuation + gl_LightSource[0].linearAttenuation * dist + gl_LightSource[0].quadraticAttenuation * dist * dist);
 
     dist = length( lightVec[1] );
     attenuation[1] = 1.0 / (gl_LightSource[1].constantAttenuation + gl_LightSource[1].linearAttenuation * dist + gl_LightSource[1].quadraticAttenuation * dist * dist);

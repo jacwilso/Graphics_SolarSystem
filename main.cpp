@@ -88,6 +88,7 @@ bool visiblePlanets = false;
 
 /******** TEXTURES ********/
 GLuint paone = 0;
+// GLuint deathStarTexture = 0;
 
 /******** PLANET ********/
 Solar_System solar;
@@ -151,6 +152,7 @@ void drawShip() {
     glDisable(GL_LIGHTING);
     gluSphere(mySphere, 1, 32, 32);
     glEnable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
 
     float lPosition[4] = { 0, 0, 0, 1 };
     glLightfv( GL_LIGHT1, GL_POSITION,lPosition );
@@ -183,6 +185,8 @@ void initScene()  {
   glLightfv( GL_LIGHT1, GL_SPOT_DIRECTION, dir ); 
   glLightf( GL_LIGHT1, GL_SPOT_CUTOFF, 2.0 );
   glLightf( GL_LIGHT1, GL_SPOT_EXPONENT, 1.0 ); 
+  glLightf( GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.1);
+  // glLightf( GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 1);
 
   glDisable(GL_CULL_FACE);
   glEnable(GL_NORMALIZE);
@@ -529,10 +533,14 @@ void loadTextures() {
   registerTexture();
   solar.setTexture(texture, NEPTUNE);
 
-  texture = SOIL_load_OGL_texture("textures/paone.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  paone = SOIL_load_OGL_texture("textures/paone.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
   glBindTexture(GL_TEXTURE_2D, texture);
   registerTexture();
   solar.setEggTexture(texture);
+
+  /*deathStarTexture = SOIL_load_OGL_texture("textures/deathStar.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  registerTexture();*/
 }
 
 // setupShaders() //////////////////////////////////////////////////////////////////////
