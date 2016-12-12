@@ -133,6 +133,30 @@ void setPlanetShaders() {
   visiblePlanets = !visiblePlanets;
 }
 
+void drawShip() {
+  glPushMatrix();
+    Vector normLook;
+    normLook = cam.camLook - cam.camPos;
+    normLook.normalize();
+    normLook *= 0.8;
+    Point draw;
+    draw = cam.camPos + normLook;
+    glTranslatef(draw.getX(), draw.getY(), draw.getZ());
+
+    // glEnable(GL_TEXTURE_2D);
+    // glBindTexture(GL_TEXTURE_2D, paone);
+    GLUquadricObj *mySphere = gluNewQuadric();
+    glScalef(0.01, 0.01, 0.01);
+    
+    glDisable(GL_LIGHTING);
+    gluSphere(mySphere, 1, 32, 32);
+    glEnable(GL_LIGHTING);
+
+    float lPosition[4] = { 0, 0, 0, 1 };
+    glLightfv( GL_LIGHT1, GL_POSITION,lPosition );
+  glPopMatrix();
+}
+
 // initScene() /////////////////////////////////////////////////////////////////
 void initScene()  {
   glEnable(GL_DEPTH_TEST);
@@ -150,6 +174,15 @@ void initScene()  {
   glLightfv( GL_LIGHT0, GL_POSITION,lPosition );
   glLightfv( GL_LIGHT0, GL_DIFFUSE,lightCol );
   glLightfv( GL_LIGHT0, GL_AMBIENT, ambientCol );
+
+  glEnable(GL_LIGHT1);
+  glLightfv( GL_LIGHT1, GL_POSITION,lPosition );
+  glLightfv( GL_LIGHT1, GL_DIFFUSE,lightCol );
+  glLightfv( GL_LIGHT1, GL_AMBIENT, ambientCol );
+  GLfloat dir[4] = {0, 0, -1, 0};
+  glLightfv( GL_LIGHT1, GL_SPOT_DIRECTION, dir ); 
+  glLightf( GL_LIGHT1, GL_SPOT_CUTOFF, 2.0 );
+  glLightf( GL_LIGHT1, GL_SPOT_EXPONENT, 1.0 ); 
 
   glDisable(GL_CULL_FACE);
   glEnable(GL_NORMALIZE);
@@ -249,6 +282,8 @@ void renderScene(void)  {
     }
   }
   glDisable( GL_TEXTURE_2D );
+
+  drawShip();
 
   if(RenderMode == GL_RENDER)
     glutSwapBuffers();
